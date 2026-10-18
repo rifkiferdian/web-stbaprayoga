@@ -1,0 +1,30 @@
+RewriteEngine On    # Turn on the rewriting engine
+
+# Do not expose editor backups, environment files, logs, or database dumps.
+<FilesMatch "(?i)(^\.|DEADJOE|\.(bak|backup|dist|ini|log|sql|swp|tmp))$">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+# not rewrite css, js and images
+RewriteCond %{REQUEST_URI} !\.(?:css|js|jpg|gif|png)$ [NC]
+
+RewriteRule  ^category/(.*)$/?$     category.php?slug=$1   [NC,L]
+RewriteRule  ^page/(.*)$/?$         page.php?slug=$1       [NC,L]
+RewriteRule  ^news/(.*)$/?$         news.php?slug=$1       [NC,L]
+RewriteRule  ^service/(.*)$/?$      service.php?slug=$1    [NC,L]
+RewriteRule  ^team-member/(.*)$/?$  team-member.php?slug=$1     [NC,L]
+RewriteRule  ^search                search.php             [NC,L]
+
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(ttf|ttc|otf|eot|woff|font.css|css)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
