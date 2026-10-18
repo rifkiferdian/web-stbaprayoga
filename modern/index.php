@@ -10,8 +10,9 @@ function modern_asset($filename, $fallback = 'no-photo1.jpg') {
 function modern_url($value, $fallback = '#') {
     $value = trim((string) $value);
     if ($value === '' || $value === '#') return $fallback;
-    if (preg_match('#^(https?://|/)#i', $value)) return $value;
-    return '#';
+    if (preg_match('#^https?://#i', $value) || str_starts_with($value, '/')) return $value;
+    if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $value) || str_starts_with($value, '//')) return '#';
+    return BASE_URL . ltrim($value, '/');
 }
 
 $settings = $pdo->query("SELECT * FROM tbl_settings WHERE id=1")->fetch(PDO::FETCH_ASSOC);
@@ -24,7 +25,13 @@ $newsStatement->execute();
 $news = $newsStatement->fetchAll(PDO::FETCH_ASSOC);
 $partners = $pdo->query("SELECT * FROM tbl_partner ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
 $socials = $pdo->query("SELECT * FROM tbl_social WHERE social_url <> '' ORDER BY social_id ASC")->fetchAll(PDO::FETCH_ASSOC);
-$menus = $pdo->query("SELECT m.*, p.page_name, p.page_slug FROM tbl_menu m LEFT JOIN tbl_page p ON m.page_id=p.page_id WHERE m.menu_parent=0 ORDER BY m.menu_order ASC LIMIT 7")->fetchAll(PDO::FETCH_ASSOC);
+$allMenus = $pdo->query("SELECT m.*, p.page_name, p.page_slug FROM tbl_menu m LEFT JOIN tbl_page p ON m.page_id=p.page_id ORDER BY m.menu_parent ASC, m.menu_order ASC")->fetchAll(PDO::FETCH_ASSOC);
+$menus = array();
+$menuChildren = array();
+foreach ($allMenus as $menuItem) {
+    if ((int) $menuItem['menu_parent'] === 0) $menus[] = $menuItem;
+    else $menuChildren[(int) $menuItem['menu_parent']][] = $menuItem;
+}
 if (!$sliders) $sliders = array(array('heading' => $settings['meta_title_home'], 'content' => $settings['meta_description_home'], 'button_text' => '', 'button_url' => '#', 'photo' => 'slider-12.jpg'));
 
 function modern_menu_link($menu) {
@@ -35,6 +42,11 @@ function modern_menu_link($menu) {
 }
 function modern_menu_name($menu) {
     return trim($menu['menu_name']) !== '' ? $menu['menu_name'] : $menu['page_name'];
+}
+function modern_link_attrs($url) {
+    $host = parse_url((string) $url, PHP_URL_HOST);
+    $baseHost = parse_url(BASE_URL, PHP_URL_HOST);
+    return $host && strcasecmp($host, (string) $baseHost) !== 0 ? ' target="_blank" rel="noopener noreferrer"' : '';
 }
 
 $heroFallbacks = array('slider-12.jpg', 'slider-11.jpg', 'slider-9.jpeg');
@@ -77,26 +89,29 @@ $counters = array(
       </div>
     </div>
   </div>
-  <header data-site-header class="fixed inset-x-0 top-9 z-50 border-b border-white/15 text-white">
+  <header data-site-header data-header-solid class="is-scrolled fixed inset-x-0 top-9 z-50 border-b border-white/15 text-white">
     <div class="container-site flex h-20 items-center justify-between">
       <a href="<?php echo BASE_URL; ?>modern/" class="flex items-center gap-3" aria-label="Beranda">
         <span class="grid h-12 w-12 place-items-center rounded-xl bg-white shadow-lg"><img src="<?php echo modern_asset($settings['logo']); ?>" class="h-10 w-10 object-contain" alt="Logo"></span>
         <span><strong class="block text-sm tracking-[.12em]">STBA PRAYOGA</strong><span class="text-[11px] text-white/65">Padang · Sumatera Barat</span></span>
       </a>
-      <nav class="hidden items-center gap-7 lg:flex" aria-label="Navigasi utama">
-        <?php foreach ($menus as $menu): $name = modern_menu_name($menu); if (!$name) continue; ?>
-          <a class="text-sm font-semibold text-white/80 transition hover:text-white" href="<?php echo modern_e(modern_menu_link($menu)); ?>"><?php echo modern_e($name); ?></a>
+      <nav class="hidden items-center gap-5 xl:flex xl:gap-7" aria-label="Navigasi utama">
+        <?php foreach ($menus as $menu): $name = modern_menu_name($menu); if (!$name) continue; $children = $menuChildren[(int) $menu['menu_id']] ?? array(); ?>
+          <div class="group relative">
+            <a class="flex items-center gap-1.5 py-7 text-sm font-semibold text-white/80 transition hover:text-white" href="<?php echo modern_e(modern_menu_link($menu)); ?>"><?php echo modern_e($name); ?><?php if ($children): ?><svg class="h-3.5 w-3.5 transition group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg><?php endif; ?></a>
+            <?php if ($children): ?><div class="invisible absolute left-0 top-full max-h-[calc(100vh-8rem)] w-72 translate-y-2 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2 text-ink opacity-0 shadow-2xl shadow-brand-dark/15 transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"><?php foreach ($children as $child): $childLink = modern_menu_link($child); ?><a class="block rounded-xl px-4 py-3 text-sm font-bold text-slate-600 transition hover:bg-brand-soft hover:text-brand" href="<?php echo modern_e($childLink); ?>"<?php echo modern_link_attrs($childLink); ?>><?php echo modern_e(modern_menu_name($child)); ?></a><?php endforeach; ?></div><?php endif; ?>
+          </div>
         <?php endforeach; ?>
       </nav>
       <div class="flex items-center gap-3">
         <a href="<?php echo BASE_URL; ?>search" class="hidden rounded-full border border-white/25 p-3 transition hover:bg-white/10 sm:block" aria-label="Cari">
           <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
         </a>
-        <button data-menu-button class="rounded-full border border-white/25 p-3 lg:hidden" aria-expanded="false" aria-label="Buka menu"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <button data-menu-button class="rounded-full border border-white/25 p-3 xl:hidden" aria-expanded="false" aria-label="Buka menu"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       </div>
     </div>
-    <nav data-mobile-menu class="container-site hidden border-t border-white/15 bg-brand-dark/95 py-5 lg:hidden" aria-label="Navigasi seluler">
-      <?php foreach ($menus as $menu): $name = modern_menu_name($menu); if (!$name) continue; ?><a class="block border-b border-white/10 py-3 text-sm font-semibold" href="<?php echo modern_e(modern_menu_link($menu)); ?>"><?php echo modern_e($name); ?></a><?php endforeach; ?>
+    <nav data-mobile-menu class="container-site hidden max-h-[calc(100vh-8rem)] overflow-y-auto border-t border-white/15 bg-brand-dark/95 py-5 xl:hidden" aria-label="Navigasi seluler">
+      <?php foreach ($menus as $menu): $name = modern_menu_name($menu); if (!$name) continue; $children = $menuChildren[(int) $menu['menu_id']] ?? array(); ?><?php if ($children): ?><details class="border-b border-white/10"><summary class="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-semibold"><?php echo modern_e($name); ?><span class="text-emerald-300">＋</span></summary><div class="mb-3 rounded-xl bg-white/5 px-3"><?php foreach ($children as $child): $childLink = modern_menu_link($child); ?><a class="block border-b border-white/10 py-3 text-sm text-white/75 last:border-0" href="<?php echo modern_e($childLink); ?>"<?php echo modern_link_attrs($childLink); ?>><?php echo modern_e(modern_menu_name($child)); ?></a><?php endforeach; ?></div></details><?php else: ?><a class="block border-b border-white/10 py-3 text-sm font-semibold" href="<?php echo modern_e(modern_menu_link($menu)); ?>"><?php echo modern_e($name); ?></a><?php endif; ?><?php endforeach; ?>
     </nav>
   </header>
 
@@ -112,7 +127,7 @@ $counters = array(
               <p class="mb-5 flex items-center gap-3 text-xs font-extrabold uppercase tracking-[.24em] text-emerald-100"><span class="h-px w-10 bg-accent"></span>Kampus bahasa untuk masa depan</p>
               <h1 class="font-display text-5xl leading-[1.06] tracking-tight sm:text-6xl lg:text-7xl"><?php echo modern_e($slide['heading']); ?></h1>
               <p class="mt-6 max-w-2xl text-base leading-8 text-white/75 sm:text-lg"><?php echo modern_e(strip_tags($slide['content'])); ?></p>
-              <div class="mt-6 flex flex-wrap gap-2 text-xs font-bold uppercase tracking-[.12em] text-emerald-50"><span class="rounded-full border border-emerald-200/30 bg-emerald-100/10 px-4 py-2">S1 Sastra Inggris</span><span class="rounded-full border border-emerald-200/30 bg-emerald-100/10 px-4 py-2">D3 Bahasa Inggris</span></div>
+              <div class="mt-6 flex flex-wrap gap-2 text-xs font-bold uppercase tracking-[.12em] text-emerald-50"><span class="rounded-full border border-emerald-200/30 bg-emerald-100/10 px-4 py-2">S1 Sastra Inggris</span></div>
               <div class="mt-9 flex flex-wrap gap-4">
                 <?php if ($slide['button_text'] !== ''): ?><a href="<?php echo modern_e(modern_url($slide['button_url'], '#services')); ?>" class="rounded-full bg-accent px-7 py-3.5 text-sm font-extrabold text-brand-dark transition hover:bg-amber-300"><?php echo modern_e($slide['button_text']); ?> <span aria-hidden="true">→</span></a><?php endif; ?>
                 <a href="#news" class="rounded-full border border-white/30 px-7 py-3.5 text-sm font-bold text-white transition hover:bg-white/10">Lihat kabar terbaru</a>
@@ -128,7 +143,7 @@ $counters = array(
     </section>
 
     <?php if ($settings['home_status_service'] === 'Show'): ?>
-    <section id="services" class="bg-sand py-24 sm:py-32">
+    <section id="program-studi" class="bg-sand py-24 sm:py-32">
       <div class="container-site">
         <div class="reveal grid gap-7 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
           <div><p class="section-kicker">Yang kami hadirkan</p><h2 class="section-title"><?php echo modern_e($settings['home_title_service']); ?></h2></div>
@@ -162,8 +177,8 @@ $counters = array(
         <div class="mt-12 grid gap-7 lg:grid-cols-3">
           <?php foreach ($news as $i => $article): ?>
           <article class="reveal group <?php echo $i === 0 ? 'lg:col-span-2 lg:row-span-2' : ''; ?>">
-            <a href="<?php echo BASE_URL; ?>news/<?php echo rawurlencode($article['news_slug']); ?>" class="block overflow-hidden rounded-3xl bg-slate-100"><img src="<?php echo modern_asset($article['photo']); ?>" alt="" class="w-full object-cover transition duration-500 group-hover:scale-[1.03] <?php echo $i === 0 ? 'h-80 lg:h-[430px]' : 'h-52'; ?>"></a>
-            <div class="pt-5"><time class="text-xs font-extrabold uppercase tracking-[.16em] text-brand"><?php echo modern_e($article['news_date']); ?></time><h3 class="mt-2 font-display leading-snug text-brand-dark <?php echo $i === 0 ? 'text-3xl sm:text-4xl' : 'text-2xl'; ?>"><a class="hover:text-brand" href="<?php echo BASE_URL; ?>news/<?php echo rawurlencode($article['news_slug']); ?>"><?php echo modern_e($article['news_title']); ?></a></h3><?php if ($i === 0): ?><p class="mt-3 max-w-2xl line-clamp-2 text-sm leading-7 text-slate-600"><?php echo modern_e(strip_tags($article['news_content_short'])); ?></p><?php endif; ?></div>
+            <a href="<?php echo BASE_URL; ?>modern/news/<?php echo rawurlencode($article['news_slug']); ?>" class="block overflow-hidden rounded-3xl bg-slate-100"><img src="<?php echo modern_asset($article['photo']); ?>" alt="" class="w-full object-cover transition duration-500 group-hover:scale-[1.03] <?php echo $i === 0 ? 'h-80 lg:h-[430px]' : 'h-52'; ?>"></a>
+            <div class="pt-5"><time class="text-xs font-extrabold uppercase tracking-[.16em] text-brand"><?php echo modern_e($article['news_date']); ?></time><h3 class="mt-2 font-display leading-snug text-brand-dark <?php echo $i === 0 ? 'text-3xl sm:text-4xl' : 'text-2xl'; ?>"><a class="hover:text-brand" href="<?php echo BASE_URL; ?>modern/news/<?php echo rawurlencode($article['news_slug']); ?>"><?php echo modern_e($article['news_title']); ?></a></h3><?php if ($i === 0): ?><p class="mt-3 max-w-2xl line-clamp-2 text-sm leading-7 text-slate-600"><?php echo modern_e(strip_tags($article['news_content_short'])); ?></p><?php endif; ?></div>
           </article>
           <?php endforeach; ?>
         </div>
@@ -182,7 +197,7 @@ $counters = array(
     </section>
   </main>
 
-  <footer class="bg-[#062d20] py-14 text-white/70">
+  <footer id="contact" class="bg-[#062d20] py-14 text-white/70">
     <div class="container-site grid gap-10 border-b border-white/10 pb-10 md:grid-cols-[1.2fr_.8fr_.8fr]">
       <div><img src="<?php echo modern_asset($settings['logo']); ?>" alt="Logo" class="h-14 w-14 rounded-xl bg-white object-contain p-1"><p class="mt-5 max-w-md text-sm leading-7"><?php echo modern_e(strip_tags($settings['footer_about'])); ?></p></div>
       <div><h3 class="text-sm font-extrabold text-white">Kontak</h3><p class="mt-4 text-sm leading-7"><?php echo modern_e(strip_tags($settings['contact_address'])); ?><br><?php echo modern_e($settings['contact_phone']); ?><br><?php echo modern_e($settings['contact_email']); ?></p></div>
