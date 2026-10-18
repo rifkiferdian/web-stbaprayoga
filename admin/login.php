@@ -16,13 +16,26 @@ $error_message='';
 
 if(isset($_POST['form1'])) {
 	require_valid_csrf_token(isset($_POST['csrf_token']) ? $_POST['csrf_token'] : null);
+	$email = isset($_POST['email']) ? strip_tags($_POST['email']) : '';
+	$password = isset($_POST['password']) ? $_POST['password'] : '';
+	$client_ip = login_client_ip();
+	$rate_limit = login_rate_limit_status($pdo, $email, $client_ip);
+
+	if ($rate_limit['limited']) {
+		http_response_code(429);
+		header('Retry-After: 900');
+		$error_message = 'Terlalu banyak percobaan login. Silakan coba lagi setelah 15 menit.<br>';
+	} elseif (!verify_recaptcha_response(isset($_POST['g-recaptcha-response']) ? $_POST['g-recaptcha-response'] : '', $client_ip)) {
+		record_login_failure($pdo, $email, $client_ip);
+		$error_message = 'Verifikasi CAPTCHA gagal. Silakan coba lagi.<br>';
+	}
         
-    if(empty($_POST['email']) || empty($_POST['password'])) {
+	if ($error_message !== '') {
+		// Do not continue to password verification.
+    } elseif(empty($email) || empty($password)) {
+		record_login_failure($pdo, $email, $client_ip);
         $error_message = 'Email and/or Password can not be empty<br>';
     } else {
-		
-		$email = strip_tags($_POST['email']);
-		$password = $_POST['password'];
 
     	$statement = $pdo->prepare("SELECT * FROM tbl_user WHERE email=? AND status=?");
     	$statement->execute(array($email,'Active'));
@@ -44,10 +57,12 @@ if(isset($_POST['form1'])) {
 		}
 
 		if (!$authenticated) {
+			record_login_failure($pdo, $email, $client_ip);
 			// Use one generic response so the login page does not reveal whether
 			// an email address exists.
 			$error_message .= 'Email atau password tidak sesuai<br>';
 		} else {
+			clear_login_failures($pdo, $email);
 			if ($legacy_md5 || password_needs_rehash($stored_password, PASSWORD_DEFAULT)) {
 				$new_password_hash = password_hash($password, PASSWORD_DEFAULT);
 				$update = $pdo->prepare("UPDATE tbl_user SET password=? WHERE id=?");
@@ -88,6 +103,9 @@ if(isset($_POST['form1'])) {
 	<link rel="stylesheet" href="css/_all-skins.min.css">
 
 	<link rel="stylesheet" href="style.css">
+	<?php if (recaptcha_is_configured()): ?>
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+	<?php endif; ?>
 </head>
 
 <body class="hold-transition login-page sidebar-mini">
@@ -113,6 +131,13 @@ if(isset($_POST['form1'])) {
 			<div class="form-group has-feedback">
 				<input class="form-control" placeholder="Password" name="password" type="password" autocomplete="off" value="">
 			</div>
+			<?php if (recaptcha_is_configured()): ?>
+			<div class="form-group">
+				<div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars(RECAPTCHA_SITE_KEY, ENT_QUOTES, 'UTF-8'); ?>"></div>
+			</div>
+			<?php elseif (!is_local_request()): ?>
+			<div class="callout callout-danger">Google reCAPTCHA belum dikonfigurasi. Login dinonaktifkan.</div>
+			<?php endif; ?>
 			<div class="row">
 				<div class="col-xs-8"></div>
 				<div class="col-xs-4">

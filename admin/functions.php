@@ -156,3 +156,96 @@ function sanitize_admin_post(array &$input)
 		}
 	}
 }
+
+function login_client_ip()
+{
+	$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
+	if (defined('TRUST_CLOUDFLARE_PROXY') && TRUST_CLOUDFLARE_PROXY && !empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+		$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+	}
+	return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '0.0.0.0';
+}
+
+function login_identifier($email)
+{
+	return hash('sha256', strtolower(trim((string) $email)));
+}
+
+function login_rate_limit_status(PDO $pdo, $email, $ip)
+{
+	$pdo->exec("DELETE FROM tbl_login_attempt WHERE attempted_at < (NOW() - INTERVAL 1 DAY)");
+	$statement = $pdo->prepare(
+		"SELECT
+		 SUM(identifier = ?) AS email_failures,
+		 SUM(ip_address = ?) AS ip_failures,
+		 MIN(attempted_at) AS first_attempt
+		 FROM tbl_login_attempt
+		 WHERE attempted_at >= (NOW() - INTERVAL 15 MINUTE)"
+	);
+	$statement->execute(array(login_identifier($email), $ip));
+	$row = $statement->fetch(PDO::FETCH_ASSOC);
+	$email_failures = (int) $row['email_failures'];
+	$ip_failures = (int) $row['ip_failures'];
+
+	return array(
+		'limited' => ($email_failures >= 5 || $ip_failures >= 20),
+		'email_failures' => $email_failures,
+		'ip_failures' => $ip_failures
+	);
+}
+
+function record_login_failure(PDO $pdo, $email, $ip)
+{
+	$statement = $pdo->prepare("INSERT INTO tbl_login_attempt (identifier, ip_address, attempted_at) VALUES (?, ?, NOW())");
+	$statement->execute(array(login_identifier($email), $ip));
+}
+
+function clear_login_failures(PDO $pdo, $email)
+{
+	$statement = $pdo->prepare("DELETE FROM tbl_login_attempt WHERE identifier = ?");
+	$statement->execute(array(login_identifier($email)));
+}
+
+function is_local_request()
+{
+	$host = isset($_SERVER['HTTP_HOST']) ? preg_replace('/:\d+$/', '', $_SERVER['HTTP_HOST']) : '';
+	return in_array(strtolower($host), array('localhost', '127.0.0.1', '::1'), true);
+}
+
+function recaptcha_is_configured()
+{
+	return defined('RECAPTCHA_SITE_KEY') && defined('RECAPTCHA_SECRET_KEY')
+		&& RECAPTCHA_SITE_KEY !== '' && RECAPTCHA_SECRET_KEY !== '';
+}
+
+function verify_recaptcha_response($response, $remote_ip)
+{
+	if (!recaptcha_is_configured()) {
+		return is_local_request();
+	}
+	if (!is_string($response) || $response === '') {
+		return false;
+	}
+
+	$curl = curl_init('https://www.google.com/recaptcha/api/siteverify');
+	curl_setopt_array($curl, array(
+		CURLOPT_POST => true,
+		CURLOPT_POSTFIELDS => http_build_query(array(
+			'secret' => RECAPTCHA_SECRET_KEY,
+			'response' => $response,
+			'remoteip' => $remote_ip
+		)),
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_CONNECTTIMEOUT => 5,
+		CURLOPT_TIMEOUT => 10,
+		CURLOPT_PROTOCOLS => CURLPROTO_HTTPS
+	));
+	$body = curl_exec($curl);
+	$status = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+	curl_close($curl);
+	if ($body === false || $status !== 200) {
+		return false;
+	}
+	$result = json_decode($body, true);
+	return is_array($result) && !empty($result['success']);
+}

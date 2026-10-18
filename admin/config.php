@@ -8,6 +8,15 @@ error_reporting(E_ALL);
 // Setting up the time zone
 date_default_timezone_set('Asia/Jakarta');
 
+$security_config_file = __DIR__ . '/security-config.local.php';
+$security_config = file_exists($security_config_file)
+	? require $security_config_file
+	: array();
+
+define('RECAPTCHA_SITE_KEY', isset($security_config['recaptcha_site_key']) ? $security_config['recaptcha_site_key'] : '');
+define('RECAPTCHA_SECRET_KEY', isset($security_config['recaptcha_secret_key']) ? $security_config['recaptcha_secret_key'] : '');
+define('TRUST_CLOUDFLARE_PROXY', !empty($security_config['trust_cloudflare_proxy']));
+
 // Host Name
 $dbhost = 'localhost';
 

@@ -38,5 +38,6 @@ Desktop.ini
 *.bak
 *.backup
 *.sql
+!/database/migrations/*.sql
 *.dump
 DEADJOE
