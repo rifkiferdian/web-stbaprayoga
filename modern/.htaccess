@@ -1,0 +1,6 @@
+RewriteEngine On
+
+ErrorDocument 404 /web-stbaprayoga/modern/page.php?error=404
+
+RewriteRule ^page/([^/]+)/?$ page.php?slug=$1 [B,QSA,L]
+

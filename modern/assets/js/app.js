@@ -1,6 +1,9 @@
 (() => {
   const siteHeader = document.querySelector('[data-site-header]');
-  const updateHeader = () => siteHeader?.classList.toggle('is-scrolled', window.scrollY > 24);
+  const updateHeader = () => siteHeader?.classList.toggle(
+    'is-scrolled',
+    siteHeader.hasAttribute('data-header-solid') || window.scrollY > 24
+  );
   updateHeader();
   window.addEventListener('scroll', updateHeader, { passive: true });
 

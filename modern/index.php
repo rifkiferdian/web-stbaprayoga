@@ -28,7 +28,9 @@ $menus = $pdo->query("SELECT m.*, p.page_name, p.page_slug FROM tbl_menu m LEFT 
 if (!$sliders) $sliders = array(array('heading' => $settings['meta_title_home'], 'content' => $settings['meta_description_home'], 'button_text' => '', 'button_url' => '#', 'photo' => 'slider-12.jpg'));
 
 function modern_menu_link($menu) {
-    if ($menu['menu_type'] === 'Page' && !empty($menu['page_slug'])) return BASE_URL . 'page/' . rawurlencode($menu['page_slug']);
+    $name = strtolower(trim((string) ($menu['menu_name'] ?? '')));
+    if (in_array($name, array('home', 'beranda'), true)) return BASE_URL . 'modern/';
+    if ($menu['menu_type'] === 'Page' && !empty($menu['page_slug'])) return BASE_URL . 'modern/page/' . rawurlencode($menu['page_slug']);
     return modern_url($menu['menu_url'], '#');
 }
 function modern_menu_name($menu) {
