@@ -1,0 +1,52 @@
+@import "tailwindcss";
+@source "../index.php";
+@source "../assets/js/app.js";
+
+@theme {
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --color-ink: #173a2d;
+  --color-brand: #187449;
+  --color-brand-dark: #0b3b29;
+  --color-brand-soft: #e9f6ee;
+  --color-accent: #f0b64d;
+  --color-sand: #f6f5ed;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-white text-ink antialiased; }
+  ::selection { @apply bg-accent/30 text-brand-dark; }
+}
+
+@layer components {
+  .container-site { @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10; }
+  .section-kicker { @apply mb-3 text-xs font-extrabold uppercase tracking-[0.24em] text-brand; }
+  .section-title { @apply font-display text-4xl leading-tight text-brand-dark md:text-5xl; }
+  .section-copy { @apply mt-4 max-w-2xl text-base leading-8 text-slate-600; }
+  .glass { @apply border border-white/20 bg-white/10 backdrop-blur-xl; }
+  .card-lift { @apply transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand/10; }
+}
+
+.hero-slide { opacity: 0; pointer-events: none; transition: opacity .65s ease; }
+.hero-slide.is-active { opacity: 1; pointer-events: auto; }
+.hero-slide.is-active .hero-copy { animation: hero-in .75s ease both; }
+@keyframes hero-in { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+[data-site-header] {
+  background-color: transparent;
+  transition: background-color .25s ease, box-shadow .25s ease, backdrop-filter .25s ease;
+}
+[data-site-header].is-scrolled {
+  background-color: rgb(11 59 41 / 94%);
+  box-shadow: 0 12px 30px rgb(11 59 41 / 18%);
+  backdrop-filter: blur(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; }
+  .reveal { opacity:1; transform:none; }
+}

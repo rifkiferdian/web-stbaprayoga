@@ -4,7 +4,8 @@
   "description": "WEBSITE STIEWW",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:modern": "tailwindcss -i ./modern/src/input.css -o ./modern/assets/css/app.css --minify",
+    "watch:modern": "tailwindcss -i ./modern/src/input.css -o ./modern/assets/css/app.css --watch"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,9 @@
     "bootstrap": "3.4.1",
     "jquery": "3.7.1",
     "jquery-migrate": "3.6.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
   }
 }
