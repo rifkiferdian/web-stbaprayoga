@@ -243,8 +243,9 @@ window.cookieconsent.initialise({
 
 
 	<!-- Scripts -->
-	<script src="<?php echo BASE_URL; ?>assets/js/jquery-2.2.4.min.js"></script>
-	<script src="<?php echo BASE_URL; ?>assets/js/bootstrap.min.js"></script>
+	<script src="<?php echo BASE_URL; ?>assets/js/jquery-3.7.1.min.js"></script>
+	<script src="<?php echo BASE_URL; ?>assets/js/jquery-migrate-3.6.0.min.js"></script>
+	<script src="<?php echo BASE_URL; ?>assets/js/bootstrap-3.4.1.min.js"></script>
 	<script src="<?php echo BASE_URL; ?>assets/js/jquery.slicknav.min.js"></script>	
 	<script src="<?php echo BASE_URL; ?>assets/js/hoverIntent.js"></script>
 	<script src="<?php echo BASE_URL; ?>assets/js/superfish.js"></script>

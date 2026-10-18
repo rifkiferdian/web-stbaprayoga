@@ -1,0 +1,42 @@
+# Dependency directories (restore with composer/npm install)
+/vendor/
+/node_modules/
+/assets/mail/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.local.php
+
+# Runtime output
+*.log
+/logs/
+/tmp/
+/cache/
+/sessions/
+
+# Test and tooling caches
+/.phpunit.result.cache
+/.php-cs-fixer.cache
+/coverage/
+/.cache/
+
+# IDE/editor files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
+
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Backups and database exports
+*.bak
+*.backup
+*.sql
+*.dump
+DEADJOE

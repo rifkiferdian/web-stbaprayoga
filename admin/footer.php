@@ -2,8 +2,9 @@
 
 	</div>
 
-	<script src="js/jquery-2.2.4.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery-3.7.1.min.js"></script>
+	<script src="js/jquery-migrate-3.6.0.min.js"></script>
+	<script src="js/bootstrap-3.4.1.min.js"></script>
 	<script src="js/jquery.dataTables.min.js"></script>
 	<script src="js/dataTables.bootstrap.min.js"></script>
 	<script src="js/select2.full.min.js"></script>

@@ -19,8 +19,7 @@ $success_message1 = '';
 
 // echo "<pre>". print_r($_SESSION,1) ."</pre>"; die();
 
-require '../assets/mail/PHPMailer.php';
-require '../assets/mail/Exception.php';
+require __DIR__ . '/../vendor/autoload.php';
 $mail = new PHPMailer\PHPMailer\PHPMailer();
 
 // Check if the user is logged in or not
@@ -85,7 +84,7 @@ $cur_page = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+
 
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-3.4.1.min.css">
 	<link rel="stylesheet" href="css/font-awesome.min.css">
 	<link rel="stylesheet" href="css/ionicons.min.css">
 	<link rel="stylesheet" href="css/datepicker3.css">

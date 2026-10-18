@@ -14,8 +14,7 @@ include("admin/config.php");
 include("admin/functions.php");
 include("admin/inc/language_data.php");
 
-require 'assets/mail/PHPMailer.php';
-require 'assets/mail/Exception.php';
+require __DIR__ . '/vendor/autoload.php';
 $mail = new PHPMailer\PHPMailer\PHPMailer();
 							
 $error_message = '';
@@ -170,7 +169,7 @@ foreach ($result as $row)
 	<link href="<?php echo BASE_URL; ?>assets/uploads/<?php echo $favicon; ?>" rel="shortcut icon" type="image/png">
 
 	<!-- Stylesheets -->
-	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/bootstrap-3.4.1.min.css">
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/slicknav.css">
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/superfish.css">
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/animate.css">
