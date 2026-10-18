@@ -33,7 +33,7 @@ $dbpass = '';
 define("BASE_URL", "http://localhost/web-stbaprayoga/");
 
 // Getting Admin url
-define("ADMIN_URL", BASE_URL . "admin" . "/");
+define("ADMIN_URL", BASE_URL . "panel-5tb4" . "/");
 
 try {
 	$pdo = new PDO("mysql:host={$dbhost};dbname={$dbname}", $dbuser, $dbpass);

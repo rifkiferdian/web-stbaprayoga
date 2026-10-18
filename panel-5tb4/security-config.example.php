@@ -1,6 +1,6 @@
 <?php
 
-// Copy this file to security-config.local.php and fill in the values.
+// Copy this file to security-config.local.php in the same directory and fill in the values.
 // security-config.local.php is excluded by .gitignore.
 return array(
 	'recaptcha_site_key' => 'YOUR_RECAPTCHA_V2_SITE_KEY',

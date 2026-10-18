@@ -10,9 +10,9 @@ session_set_cookie_params(array(
 	'samesite' => 'Lax'
 ));
 session_start();
-include("admin/config.php");
-include("admin/functions.php");
-include("admin/inc/language_data.php");
+include("panel-5tb4/config.php");
+include("panel-5tb4/functions.php");
+include("panel-5tb4/inc/language_data.php");
 
 require __DIR__ . '/vendor/autoload.php';
 $mail = new PHPMailer\PHPMailer\PHPMailer();
