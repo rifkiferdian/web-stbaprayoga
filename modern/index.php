@@ -83,9 +83,9 @@ $counters = array(
           <?php echo modern_e($settings['contact_phone']); ?>
         </a>
       </div>
-      <div class="flex shrink-0 items-center gap-4">
-        <span class="hidden uppercase tracking-[.14em] md:inline">Kampus Bahasa · Padang</span>
-        <a href="<?php echo BASE_URL; ?>panel-5tb4/login.php" class="border-l border-white/20 pl-4 text-white transition hover:text-emerald-200">Portal Admin</a>
+      <div class="flex shrink-0 items-center gap-3">
+        <span class="hidden uppercase tracking-[.14em] md:inline">Media Sosial</span>
+        <?php foreach ($socials as $social): ?><a href="<?php echo modern_e(modern_url($social['social_url'])); ?>" target="_blank" rel="noopener noreferrer" class="border-l border-white/20 pl-3 text-white transition hover:text-emerald-200"><?php echo modern_e($social['social_name']); ?></a><?php endforeach; ?>
       </div>
     </div>
   </div>
