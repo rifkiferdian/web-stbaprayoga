@@ -1,6 +1,18 @@
 <?php require_once('header.php'); ?>
 
 <?php
+function settings_remove_upload($filename) {
+    $filename = basename(trim((string) $filename));
+    if ($filename === '') {
+        return;
+    }
+
+    $uploadPath = __DIR__ . '/../assets/uploads/' . $filename;
+    if (is_file($uploadPath)) {
+        unlink($uploadPath);
+    }
+}
+
 if(isset($_POST['form1'])) {
 	$valid = 1;
 
@@ -26,7 +38,7 @@ if(isset($_POST['form1'])) {
     	$result = $statement->fetchAll(PDO::FETCH_ASSOC);							
     	foreach ($result as $row) {
     		$logo = $row['logo'];
-    		unlink('../assets/uploads/'.$logo);
+		settings_remove_upload($logo);
     	}
 
     	// updating the data
@@ -67,7 +79,7 @@ if(isset($_POST['form2'])) {
     	$result = $statement->fetchAll(PDO::FETCH_ASSOC);							
     	foreach ($result as $row) {
     		$favicon = $row['favicon'];
-    		unlink('../assets/uploads/'.$favicon);
+		settings_remove_upload($favicon);
     	}
 
     	// updating the data
@@ -150,7 +162,7 @@ if(isset($_POST['form_newsletter'])) {
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);                           
             foreach ($result as $row) {
                 $newsletter_photo = $row['newsletter_photo'];
-                unlink('../assets/uploads/'.$newsletter_photo);
+                settings_remove_upload($newsletter_photo);
             }
 
             // updating the data
@@ -198,7 +210,7 @@ if(isset($_POST['form_banner_search'])) {
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);                           
         foreach ($result as $row) {
             $banner_search = $row['banner_search'];
-            unlink('../assets/uploads/'.$banner_search);
+            settings_remove_upload($banner_search);
         }
 
         // updating the data
@@ -239,7 +251,7 @@ if(isset($_POST['form_banner_category'])) {
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);                           
         foreach ($result as $row) {
             $banner_category = $row['banner_category'];
-            unlink('../assets/uploads/'.$banner_category);
+            settings_remove_upload($banner_category);
         }
 
         // updating the data
@@ -294,7 +306,7 @@ if(isset($_POST['form_home_testimonial'])) {
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);                           
             foreach ($result as $row) {
                 $home_photo_testimonial = $row['home_photo_testimonial'];
-                unlink('../assets/uploads/'.$home_photo_testimonial);
+                settings_remove_upload($home_photo_testimonial);
             }
 
             // updating the data
@@ -355,7 +367,7 @@ if(isset($_POST['form_home_counter'])) {
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);                           
             foreach ($result as $row) {
                 $counter_photo = $row['counter_photo'];
-                unlink('../assets/uploads/'.$counter_photo);
+                settings_remove_upload($counter_photo);
             }
 
             // updating the data

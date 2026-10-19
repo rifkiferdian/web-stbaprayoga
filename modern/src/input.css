@@ -74,10 +74,31 @@
 .modern-content th:last-child, .modern-content td:last-child { border-right: 0; }
 .modern-content iframe { display: block; width: 100%; min-height: min(70vh, 720px); border: 1px solid #dcebe2; border-radius: 1rem; background: #f8fafc; }
 
+.history-content { overflow: visible; background: linear-gradient(180deg, #fff 0, #f8fcf9 100%); }
+.history-intro { position: relative; overflow: hidden; margin: -1rem -1rem 3rem; border-radius: 1.5rem; background: #0b3b29; padding: 2rem; color: rgb(255 255 255 / 72%); }
+.history-intro::after { content: "1971"; position: absolute; right: -1rem; bottom: -2.25rem; color: rgb(255 255 255 / 6%); font-family: "DM Serif Display", Georgia, serif; font-size: 9rem; line-height: 1; }
+.history-intro span { position: relative; z-index: 1; color: #9ee3b8; font-size: .7rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+.history-intro h2 { position: relative; z-index: 1; max-width: 18ch; margin-top: .65rem; border: 0; padding: 0; color: white; font-size: clamp(2rem, 4vw, 3rem); }
+.history-intro p { position: relative; z-index: 1; max-width: 56ch; margin-top: 1rem; }
+.history-content > p:not(:has(img)) { position: relative; max-width: none; margin-left: 2rem; border: 1px solid #dcebe2; border-radius: 1.25rem; background: white; padding: 1.4rem 1.5rem; box-shadow: 0 12px 30px rgb(11 59 41 / 5%); }
+.history-content > p:not(:has(img))::before { content: ""; position: absolute; top: 1.7rem; left: -2.45rem; z-index: 1; width: .85rem; height: .85rem; border: .2rem solid #d8f2e1; border-radius: 999px; background: #187449; box-shadow: 0 0 0 .3rem white; }
+.history-content > p:not(:has(img))::after { content: ""; position: absolute; top: 2.5rem; bottom: -2.9rem; left: -2.05rem; width: 1px; background: #bcdcca; }
+.history-content > p:not(:has(img)):last-of-type::after { display: none; }
+.history-content > p:not(:has(img)):has(+ p:has(img))::after { display: none; }
+.history-content > p:has(img) { max-width: none; }
+.history-content > p:has(img:first-child) { margin: 0 0 3rem; }
+.history-content > p:has(img[src$="stba-history-yard.jpg"]) { display: none; }
+.history-content > p img { width: 100%; max-height: 440px; object-fit: cover; object-position: center; }
+
 @media (max-width: 640px) {
   .modern-content { font-size: .95rem; line-height: 1.8; }
   .modern-content table { display: block; overflow-x: auto; white-space: nowrap; }
   .modern-content iframe { min-height: 520px; }
+  .history-intro { margin: -.25rem -.25rem 2rem; padding: 1.5rem; }
+  .history-intro::after { font-size: 6rem; }
+  .history-content > p:not(:has(img)) { margin-left: 1.25rem; padding: 1.15rem; }
+  .history-content > p:not(:has(img))::before { left: -1.65rem; }
+  .history-content > p:not(:has(img))::after { left: -1.25rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

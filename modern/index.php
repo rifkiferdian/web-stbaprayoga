@@ -17,7 +17,6 @@ function modern_url($value, $fallback = '#') {
 
 $settings = $pdo->query("SELECT * FROM tbl_settings WHERE id=1")->fetch(PDO::FETCH_ASSOC);
 $sliders = $pdo->query("SELECT * FROM tbl_slider WHERE status='Active' ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
-$services = $pdo->query("SELECT * FROM tbl_service ORDER BY id ASC LIMIT 6")->fetchAll(PDO::FETCH_ASSOC);
 $newsLimit = max(3, min(6, (int) $settings['total_recent_news_home_page']));
 $newsStatement = $pdo->prepare("SELECT * FROM tbl_news ORDER BY news_id DESC LIMIT :limit");
 $newsStatement->bindValue(':limit', $newsLimit, PDO::PARAM_INT);
@@ -48,11 +47,32 @@ function modern_link_attrs($url) {
     $baseHost = parse_url(BASE_URL, PHP_URL_HOST);
     return $host && strcasecmp($host, (string) $baseHost) !== 0 ? ' target="_blank" rel="noopener noreferrer"' : '';
 }
+function modern_social_url($socials, $platform) {
+    $aliases = array(
+        'youtube' => array('youtube'),
+        'instagram' => array('instagram'),
+        'x' => array('x', 'twitter'),
+        'whatsapp' => array('whatsapp', 'wa')
+    );
+    foreach ($socials as $social) {
+        $name = strtolower(trim((string) ($social['social_name'] ?? '')));
+        if (in_array($name, $aliases[$platform] ?? array(), true)) return modern_url($social['social_url'], '');
+    }
+    return '';
+}
 
 $heroFallbacks = array('slider-12.jpg', 'slider-11.jpg', 'slider-9.jpeg');
 $counters = array(
     array($settings['counter_1_value'], $settings['counter_1_title']), array($settings['counter_2_value'], $settings['counter_2_title']),
     array($settings['counter_3_value'], $settings['counter_3_title']), array($settings['counter_4_value'], $settings['counter_4_title'])
+);
+$campusOffers = array(
+    array('title' => 'Pembelajaran Bahasa Inggris', 'description' => 'Mengembangkan kemampuan bahasa Inggris akademik, profesional, dan komunikatif melalui proses belajar yang aktif dan terarah.', 'image' => 'slider-3.jpg', 'label' => 'Komunikatif'),
+    array('title' => 'Kajian Bahasa dan Sastra', 'description' => 'Mendalami linguistik, kesusastraan, penulisan, penerjemahan, serta analisis karya dalam bahasa Inggris.', 'image' => 'slider-9.jpeg', 'label' => 'Akademik'),
+    array('title' => 'Dosen Berpengalaman', 'description' => 'Belajar bersama tenaga pengajar yang kompeten dan berdedikasi dalam bidang bahasa, sastra, dan penelitian.', 'image' => 'slider-11.jpg', 'label' => 'Berkualitas'),
+    array('title' => 'Lingkungan Belajar Humanis', 'description' => 'Suasana kampus yang mendukung perkembangan intelektual, karakter, kreativitas, dan kepedulian sosial.', 'image' => 'slider-12.jpg', 'label' => 'Humanis'),
+    array('title' => 'Pengembangan Kompetensi', 'description' => 'Kegiatan akademik dan kemahasiswaan membantu mahasiswa mengasah komunikasi, organisasi, serta kepemimpinan.', 'image' => 'news-33.jpeg', 'label' => 'Bertumbuh'),
+    array('title' => 'Persiapan Karier', 'description' => 'Mempersiapkan lulusan untuk berkarya di bidang pendidikan, penerjemahan, komunikasi, pariwisata, media, dan industri kreatif.', 'image' => 'news-31.jpeg', 'label' => 'Masa Depan')
 );
 ?>
 <!doctype html>
@@ -83,9 +103,11 @@ $counters = array(
           <?php echo modern_e($settings['contact_phone']); ?>
         </a>
       </div>
-      <div class="flex shrink-0 items-center gap-3">
-        <span class="hidden uppercase tracking-[.14em] md:inline">Media Sosial</span>
-        <?php foreach ($socials as $social): ?><a href="<?php echo modern_e(modern_url($social['social_url'])); ?>" target="_blank" rel="noopener noreferrer" class="border-l border-white/20 pl-3 text-white transition hover:text-emerald-200"><?php echo modern_e($social['social_name']); ?></a><?php endforeach; ?>
+      <div class="flex shrink-0 items-center gap-1" aria-label="Media sosial">
+        <?php $socialUrl = modern_social_url($socials, 'youtube'); ?><a href="<?php echo modern_e($socialUrl ?: '#'); ?>"<?php if ($socialUrl): ?> target="_blank" rel="noopener noreferrer"<?php else: ?> aria-disabled="true"<?php endif; ?> class="grid h-7 w-7 place-items-center rounded-full text-white transition hover:bg-white/10 hover:text-red-300<?php echo $socialUrl ? '' : ' pointer-events-none opacity-40'; ?>" aria-label="YouTube" title="YouTube"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg></a>
+        <?php $socialUrl = modern_social_url($socials, 'instagram'); ?><a href="<?php echo modern_e($socialUrl ?: '#'); ?>"<?php if ($socialUrl): ?> target="_blank" rel="noopener noreferrer"<?php else: ?> aria-disabled="true"<?php endif; ?> class="grid h-7 w-7 place-items-center rounded-full text-white transition hover:bg-white/10 hover:text-pink-300<?php echo $socialUrl ? '' : ' pointer-events-none opacity-40'; ?>" aria-label="Instagram<?php echo $socialUrl ? '' : ' — tautan belum tersedia'; ?>" title="Instagram<?php echo $socialUrl ? '' : ' — tautan belum tersedia'; ?>"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <?php $socialUrl = modern_social_url($socials, 'x'); ?><a href="<?php echo modern_e($socialUrl ?: '#'); ?>"<?php if ($socialUrl): ?> target="_blank" rel="noopener noreferrer"<?php else: ?> aria-disabled="true"<?php endif; ?> class="grid h-7 w-7 place-items-center rounded-full text-white transition hover:bg-white/10 hover:text-emerald-200<?php echo $socialUrl ? '' : ' pointer-events-none opacity-40'; ?>" aria-label="X<?php echo $socialUrl ? '' : ' — tautan belum tersedia'; ?>" title="X<?php echo $socialUrl ? '' : ' — tautan belum tersedia'; ?>"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23.2 22H17l-4.9-6.4L6.5 22H3.3l7.3-8.4L2.8 2h6.4l4.4 5.8L18.9 2Zm-1.1 17.9h1.7L8.3 4H6.5l11.3 15.9Z"/></svg></a>
+        <?php $socialUrl = modern_social_url($socials, 'whatsapp'); ?><a href="<?php echo modern_e($socialUrl ?: '#'); ?>"<?php if ($socialUrl): ?> target="_blank" rel="noopener noreferrer"<?php else: ?> aria-disabled="true"<?php endif; ?> class="grid h-7 w-7 place-items-center rounded-full text-white transition hover:bg-white/10 hover:text-emerald-300<?php echo $socialUrl ? '' : ' pointer-events-none opacity-40'; ?>" aria-label="WhatsApp" title="WhatsApp"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0 11.9 11.9 0 0 0 1.8 17.8L.1 24l6.4-1.7A11.9 11.9 0 0 0 24 11.9c0-3.2-1.2-6.2-3.5-8.4ZM12.1 20a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 1 1 8.4 4.7Zm5.4-7.3c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2l-.9 1.1c-.2.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5A9 9 0 0 1 9.1 9.5c-.2-.3 0-.5.1-.6l.5-.6.3-.5c.1-.2.1-.4 0-.6l-1-2.3c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.4-1.2 1.2-1.2 2.9s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.9 5.2.8.3 1.5.5 2 .6.8.3 1.6.2 2.2.1.7-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.6-.4l-1.2-.6Z"/></svg></a>
       </div>
     </div>
   </div>
@@ -146,15 +168,20 @@ $counters = array(
     <section id="program-studi" class="bg-sand py-24 sm:py-32">
       <div class="container-site">
         <div class="reveal grid gap-7 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
-          <div><p class="section-kicker">Yang kami hadirkan</p><h2 class="section-title"><?php echo modern_e($settings['home_title_service']); ?></h2></div>
-          <p class="section-copy lg:ml-auto"><?php echo modern_e($settings['home_subtitle_service'] ?: 'Komitmen untuk menghadirkan pengalaman dan layanan terbaik bagi seluruh komunitas.'); ?></p>
+          <div><p class="section-kicker">Yang kami hadirkan</p><h2 class="section-title">Pengalaman belajar untuk masa depan</h2></div>
+          <p class="section-copy lg:ml-auto">STBA Prayoga menghadirkan pendidikan bahasa dan sastra Inggris dalam lingkungan belajar yang humanis. Mahasiswa dibekali pengetahuan, keterampilan, pengalaman, dan nilai-nilai yang diperlukan untuk berkembang di dunia kerja maupun masyarakat.</p>
         </div>
-        <div class="mt-14 grid gap-6 md:grid-cols-3">
-          <?php foreach ($services as $i => $service): ?>
-          <a href="<?php echo BASE_URL; ?>service/<?php echo rawurlencode($service['slug']); ?>" class="reveal card-lift group overflow-hidden rounded-[1.75rem] bg-white shadow-sm" style="transition-delay:<?php echo $i * 70; ?>ms">
-            <div class="relative h-56 overflow-hidden bg-brand-soft"><img src="<?php echo modern_asset($service['photo']); ?>" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-105"><span class="absolute left-5 top-5 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-xs font-extrabold text-brand">0<?php echo $i + 1; ?></span></div>
-            <div class="p-7"><h3 class="font-display text-2xl text-brand-dark"><?php echo modern_e($service['name']); ?></h3><p class="mt-3 line-clamp-3 text-sm leading-7 text-slate-600"><?php echo modern_e(strip_tags($service['short_description'])); ?></p><span class="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-brand">Selengkapnya <span class="transition group-hover:translate-x-1">→</span></span></div>
-          </a>
+        <div class="mt-14 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <?php foreach ($campusOffers as $i => $offer): ?>
+          <article class="reveal card-lift group overflow-hidden rounded-[1.75rem] border border-brand/10 bg-white shadow-sm" style="transition-delay:<?php echo $i * 70; ?>ms">
+            <div class="relative h-56 overflow-hidden bg-brand-soft">
+              <img src="<?php echo modern_asset($offer['image']); ?>" alt="Ilustrasi <?php echo modern_e($offer['title']); ?> di STBA Prayoga" class="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy">
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/70 via-transparent to-transparent"></div>
+              <span class="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.14em] text-brand"><?php echo modern_e($offer['label']); ?></span>
+              <span class="absolute bottom-5 right-5 font-display text-4xl text-white/70">0<?php echo $i + 1; ?></span>
+            </div>
+            <div class="p-7"><h3 class="font-display text-2xl text-brand-dark"><?php echo modern_e($offer['title']); ?></h3><p class="mt-3 text-sm leading-7 text-slate-600"><?php echo modern_e($offer['description']); ?></p></div>
+          </article>
           <?php endforeach; ?>
         </div>
       </div>
