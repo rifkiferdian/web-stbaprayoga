@@ -87,9 +87,11 @@ $campusOffers = array(
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/app.css">
+  <script>document.documentElement.classList.add('js');</script>
   <script src="assets/js/app.js" defer></script>
 </head>
 <body>
+  <?php require __DIR__ . '/loader.php'; ?>
   <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3">Lewati ke konten</a>
   <div class="fixed inset-x-0 top-0 z-[60] h-9 bg-brand-dark text-white/75">
     <div class="container-site flex h-full items-center justify-between text-[11px] font-semibold tracking-wide">
@@ -126,9 +128,9 @@ $campusOffers = array(
         <?php endforeach; ?>
       </nav>
       <div class="flex items-center gap-3">
-        <a href="<?php echo BASE_URL; ?>search" class="hidden rounded-full border border-white/25 p-3 transition hover:bg-white/10 sm:block" aria-label="Cari">
+        <button type="button" data-search-open class="rounded-full border border-white/25 p-3 transition hover:bg-white/10" aria-label="Buka pencarian">
           <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-        </a>
+        </button>
         <button data-menu-button class="rounded-full border border-white/25 p-3 xl:hidden" aria-expanded="false" aria-label="Buka menu"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       </div>
     </div>
@@ -136,6 +138,11 @@ $campusOffers = array(
       <?php foreach ($menus as $menu): $name = modern_menu_name($menu); if (!$name) continue; $children = $menuChildren[(int) $menu['menu_id']] ?? array(); ?><?php if ($children): ?><details class="border-b border-white/10"><summary class="flex cursor-pointer list-none items-center justify-between py-3 text-sm font-semibold"><?php echo modern_e($name); ?><span class="text-emerald-300">＋</span></summary><div class="mb-3 rounded-xl bg-white/5 px-3"><?php foreach ($children as $child): $childLink = modern_menu_link($child); ?><a class="block border-b border-white/10 py-3 text-sm text-white/75 last:border-0" href="<?php echo modern_e($childLink); ?>"<?php echo modern_link_attrs($childLink); ?>><?php echo modern_e(modern_menu_name($child)); ?></a><?php endforeach; ?></div></details><?php else: ?><a class="block border-b border-white/10 py-3 text-sm font-semibold" href="<?php echo modern_e(modern_menu_link($menu)); ?>"><?php echo modern_e($name); ?></a><?php endif; ?><?php endforeach; ?>
     </nav>
   </header>
+
+  <div data-search-overlay class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true" aria-labelledby="search-title">
+    <button type="button" data-search-close class="absolute inset-0 bg-brand-dark/80 backdrop-blur-md" aria-label="Tutup pencarian"></button>
+    <div class="container-site relative flex min-h-full items-start justify-center px-4 pt-24 sm:pt-36"><div class="w-full max-w-3xl rounded-[2rem] bg-white p-6 shadow-2xl sm:p-9"><div class="flex items-start justify-between gap-5"><div><p class="text-xs font-extrabold uppercase tracking-[.18em] text-brand">Pencarian situs</p><h2 id="search-title" class="mt-2 font-display text-3xl text-brand-dark">Apa yang ingin Anda cari?</h2></div><button type="button" data-search-close class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-brand-soft hover:text-brand" aria-label="Tutup pencarian"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><form action="<?php echo BASE_URL; ?>modern/search" method="get" class="mt-7 flex gap-3"><label class="sr-only" for="site-search-home">Kata pencarian</label><div class="relative min-w-0 flex-1"><svg class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input data-search-input id="site-search-home" name="q" type="search" minlength="2" maxlength="100" required placeholder="Cari informasi di STBA Prayoga…" class="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-12 pr-4 text-sm text-ink outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10"></div><button class="rounded-2xl bg-brand px-6 py-4 text-sm font-extrabold text-white transition hover:bg-brand-dark">Cari</button></form><p class="mt-4 text-xs leading-6 text-slate-500">Cari profil kampus, program studi, PMB, akreditasi, dosen, serta berita dan kegiatan terbaru.</p></div></div>
+  </div>
 
   <main id="main">
     <section class="relative min-h-[760px] overflow-hidden bg-brand-dark text-white">
@@ -200,7 +207,7 @@ $campusOffers = array(
     <?php if ($settings['home_status_news'] === 'Show'): ?>
     <section id="news" class="py-24 sm:py-32">
       <div class="container-site">
-        <div class="reveal flex flex-col justify-between gap-6 sm:flex-row sm:items-end"><div><p class="section-kicker">Cerita terbaru</p><h2 class="section-title"><?php echo modern_e($settings['home_title_news']); ?></h2><p class="section-copy"><?php echo modern_e($settings['home_subtitle_news']); ?></p></div><a href="<?php echo BASE_URL; ?>category/news" class="w-fit rounded-full border border-slate-300 px-6 py-3 text-sm font-bold text-brand transition hover:border-brand hover:bg-brand-soft">Lihat semua berita</a></div>
+        <div class="reveal flex flex-col justify-between gap-6 sm:flex-row sm:items-end"><div><p class="section-kicker">Cerita terbaru</p><h2 class="section-title"><?php echo modern_e($settings['home_title_news']); ?></h2><p class="section-copy"><?php echo modern_e($settings['home_subtitle_news']); ?></p></div><a href="<?php echo BASE_URL; ?>modern/berita" class="w-fit rounded-full border border-slate-300 px-6 py-3 text-sm font-bold text-brand transition hover:border-brand hover:bg-brand-soft">Lihat semua berita</a></div>
         <div class="mt-12 grid gap-7 lg:grid-cols-3">
           <?php foreach ($news as $i => $article): ?>
           <article class="reveal group <?php echo $i === 0 ? 'lg:col-span-2 lg:row-span-2' : ''; ?>">

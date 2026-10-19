@@ -1,4 +1,21 @@
 (() => {
+  const siteLoader = document.querySelector('[data-site-loader]');
+  if (siteLoader) {
+    let loaderDismissed = false;
+    const dismissLoader = () => {
+      if (loaderDismissed) return;
+      loaderDismissed = true;
+      const minimumDelay = Math.max(0, 700 - performance.now());
+      window.setTimeout(() => {
+        siteLoader.classList.add('is-loaded');
+        window.setTimeout(() => siteLoader.remove(), 650);
+      }, minimumDelay);
+    };
+    if (document.readyState === 'complete') dismissLoader();
+    else window.addEventListener('load', dismissLoader, { once: true });
+    window.setTimeout(dismissLoader, 4500);
+  }
+
   const siteHeader = document.querySelector('[data-site-header]');
   const updateHeader = () => siteHeader?.classList.toggle(
     'is-scrolled',
@@ -16,6 +33,29 @@
       mobileMenu.classList.toggle('hidden', open);
     });
   }
+
+  const searchOverlay = document.querySelector('[data-search-overlay]');
+  const searchOpeners = document.querySelectorAll('[data-search-open]');
+  const searchClosers = document.querySelectorAll('[data-search-close]');
+  const searchInput = searchOverlay?.querySelector('[data-search-input]');
+  let searchReturnFocus = null;
+  const closeSearch = () => {
+    if (!searchOverlay || searchOverlay.classList.contains('hidden')) return;
+    searchOverlay.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+    searchReturnFocus?.focus();
+  };
+  searchOpeners.forEach((button) => button.addEventListener('click', () => {
+    if (!searchOverlay) return;
+    searchReturnFocus = button;
+    searchOverlay.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+    window.setTimeout(() => searchInput?.focus(), 50);
+  }));
+  searchClosers.forEach((button) => button.addEventListener('click', closeSearch));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeSearch();
+  });
 
   const slides = [...document.querySelectorAll('[data-hero-slide]')];
   const dots = [...document.querySelectorAll('[data-hero-dot]')];
