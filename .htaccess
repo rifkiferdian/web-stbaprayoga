@@ -12,6 +12,11 @@ Options -Indexes
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
+
+# Use the modern public website as the default landing page.
+# The legacy index.php remains available when accessed explicitly.
+RewriteRule ^$ %{REQUEST_URI}modern/ [R=302,L,NE]
+
 # not rewrite css, js and images
 RewriteCond %{REQUEST_URI} !\.(?:css|js|jpg|gif|png)$ [NC]
 

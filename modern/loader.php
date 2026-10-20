@@ -8,9 +8,8 @@
       <span class="site-loader__orbit"></span>
       <span class="site-loader__logo"><img src="<?php echo modern_asset($settings['logo']); ?>" alt=""></span>
     </div>
-    <p class="site-loader__eyebrow">Kampus Bahasa · Padang</p>
     <p class="site-loader__name">STBA Prayoga</p>
+    <p class="site-loader__message">Padang &middot; Sumatera Barat</p>
     <div class="site-loader__progress" aria-hidden="true"><span></span></div>
-    <p class="site-loader__message">Menyiapkan halaman untuk Anda</p>
   </div>
 </div>
