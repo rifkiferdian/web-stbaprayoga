@@ -1,0 +1,511 @@
+{
+    "source_export": "stbaprayogapadang.WordPress.2026-10-20.xml",
+    "generated_at": "2026-10-20T17:31:04+02:00",
+    "total_ids": 59,
+    "downloaded": 49,
+    "existing": 0,
+    "failed": 10,
+    "media": [
+        {
+            "id": 1584,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1584",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 1596,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1596",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 1597,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1597",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 1599,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1599",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 1600,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1600",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 1601,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1601",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 1693,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1693",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 1694,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1694",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 1695,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/1695",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 2207,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2207",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/03/studentact3.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2207-studentact3.jpg",
+            "status": "downloaded",
+            "bytes": 206488
+        },
+        {
+            "id": 2212,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2212",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/03/Brosur2020.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2212-Brosur2020.jpg",
+            "status": "downloaded",
+            "bytes": 487013
+        },
+        {
+            "id": 2220,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2220",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/03/classroom2.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2220-classroom2.jpg",
+            "status": "downloaded",
+            "bytes": 118967
+        },
+        {
+            "id": 2226,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2226",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/03/labkomp2.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2226-labkomp2.jpg",
+            "status": "downloaded",
+            "bytes": 114370
+        },
+        {
+            "id": 2227,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2227",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/03/lab2.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2227-lab2.jpg",
+            "status": "downloaded",
+            "bytes": 99286
+        },
+        {
+            "id": 2288,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2288",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/dos2019.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2288-dos2019.jpg",
+            "status": "downloaded",
+            "bytes": 153493
+        },
+        {
+            "id": 2289,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2289",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/Gambar_13.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2289-Gambar_13.jpg",
+            "status": "downloaded",
+            "bytes": 192704
+        },
+        {
+            "id": 2295,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2295",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/Kurikulum-2013-part-2.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2295-Kurikulum-2013-part-2.jpg",
+            "status": "downloaded",
+            "bytes": 104761
+        },
+        {
+            "id": 2296,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2296",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/mqdefault.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2296-mqdefault.jpg",
+            "status": "downloaded",
+            "bytes": 11018
+        },
+        {
+            "id": 2297,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2297",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/Relawan-Krisis.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2297-Relawan-Krisis.jpg",
+            "status": "downloaded",
+            "bytes": 32973
+        },
+        {
+            "id": 2310,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2310",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/WhatsApp-Image-2017-11-07-at-21.14.09.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2310-WhatsApp-Image-2017-11-07-at-21.14.09.jpg",
+            "status": "downloaded",
+            "bytes": 97853
+        },
+        {
+            "id": 2311,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2311",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/WhatsApp-Image-2017-11-07-at-22.21.17.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2311-WhatsApp-Image-2017-11-07-at-22.21.17.jpg",
+            "status": "downloaded",
+            "bytes": 124549
+        },
+        {
+            "id": 2312,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2312",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/WhatsApp-Image-2017-11-07-at-22.21.39.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2312-WhatsApp-Image-2017-11-07-at-22.21.39.jpg",
+            "status": "downloaded",
+            "bytes": 387964
+        },
+        {
+            "id": 2313,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2313",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/WhatsApp-Image-2017-11-07-at-22.30.17.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2313-WhatsApp-Image-2017-11-07-at-22.30.17.jpg",
+            "status": "downloaded",
+            "bytes": 144499
+        },
+        {
+            "id": 2314,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2314",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/WhatsApp-Image-2017-11-07-at-22.31.04.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2314-WhatsApp-Image-2017-11-07-at-22.31.04.jpg",
+            "status": "downloaded",
+            "bytes": 156842
+        },
+        {
+            "id": 2315,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2315",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/WhatsApp-Image-2017-11-07-at-22.32.06.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2315-WhatsApp-Image-2017-11-07-at-22.32.06.jpg",
+            "status": "downloaded",
+            "bytes": 144499
+        },
+        {
+            "id": 2316,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2316",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/WhatsApp-Image-2017-11-07-at-22.44.15.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2316-WhatsApp-Image-2017-11-07-at-22.44.15.jpg",
+            "status": "downloaded",
+            "bytes": 143286
+        },
+        {
+            "id": 2317,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2317",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/04/WhatsApp-Image-2017-11-07-at-22.47.51.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2317-WhatsApp-Image-2017-11-07-at-22.47.51.jpg",
+            "status": "downloaded",
+            "bytes": 108845
+        },
+        {
+            "id": 2343,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2343",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2020/06/pmbstbagel2.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2343-pmbstbagel2.jpeg",
+            "status": "downloaded",
+            "bytes": 168484
+        },
+        {
+            "id": 2498,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2498",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/25.-LAPANGAN-OLAHRAGA.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2498-25.-LAPANGAN-OLAHRAGA.jpg",
+            "status": "downloaded",
+            "bytes": 7405568
+        },
+        {
+            "id": 2499,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2499",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/16.-PERPUSTAKAAN.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2499-16.-PERPUSTAKAAN.jpg",
+            "status": "downloaded",
+            "bytes": 1982329
+        },
+        {
+            "id": 2500,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2500",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/23.-PANGGUNG-TERBUKA.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2500-23.-PANGGUNG-TERBUKA.jpg",
+            "status": "downloaded",
+            "bytes": 4340542
+        },
+        {
+            "id": 2501,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2501",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/24.-LAPANGAN-BASKET-DAN-FUTSAL.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2501-24.-LAPANGAN-BASKET-DAN-FUTSAL.jpg",
+            "status": "downloaded",
+            "bytes": 4549783
+        },
+        {
+            "id": 2502,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2502",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/17.-LABOR-KOMPUTER.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2502-17.-LABOR-KOMPUTER.jpg",
+            "status": "downloaded",
+            "bytes": 2457600
+        },
+        {
+            "id": 2503,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2503",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/19.-KEGIATAN-DI-AULA.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2503-19.-KEGIATAN-DI-AULA.jpg",
+            "status": "downloaded",
+            "bytes": 275638
+        },
+        {
+            "id": 2504,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2504",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/12.-KEGIATAN-PkM-di-Kayu-Tanam-1.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2504-12.-KEGIATAN-PkM-di-Kayu-Tanam-1.jpg",
+            "status": "downloaded",
+            "bytes": 207311
+        },
+        {
+            "id": 2505,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2505",
+            "status": "failed",
+            "error": "API HTTP 404"
+        },
+        {
+            "id": 2511,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2511",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/WhatsApp-Image-2018-12-18-at-09.40.23.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2511-WhatsApp-Image-2018-12-18-at-09.40.23.jpeg",
+            "status": "downloaded",
+            "bytes": 142515
+        },
+        {
+            "id": 2512,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2512",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/WhatsApp-Image-2018-12-18-at-09.40.22.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2512-WhatsApp-Image-2018-12-18-at-09.40.22.jpeg",
+            "status": "downloaded",
+            "bytes": 180206
+        },
+        {
+            "id": 2513,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2513",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/WhatsApp-Image-2018-12-17-at-12.51.08.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2513-WhatsApp-Image-2018-12-17-at-12.51.08.jpeg",
+            "status": "downloaded",
+            "bytes": 180901
+        },
+        {
+            "id": 2514,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2514",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/WhatsApp-Image-2018-12-17-at-12.46.38.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2514-WhatsApp-Image-2018-12-17-at-12.46.38.jpeg",
+            "status": "downloaded",
+            "bytes": 136301
+        },
+        {
+            "id": 2517,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2517",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/FOTO-10.jpg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2517-FOTO-10.jpg",
+            "status": "downloaded",
+            "bytes": 4309995
+        },
+        {
+            "id": 2518,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2518",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/Kunjungan-ke-Panti-asuhan.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2518-Kunjungan-ke-Panti-asuhan.jpeg",
+            "status": "downloaded",
+            "bytes": 209596
+        },
+        {
+            "id": 2519,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2519",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/Pelantikan-senat.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2519-Pelantikan-senat.jpeg",
+            "status": "downloaded",
+            "bytes": 156965
+        },
+        {
+            "id": 2521,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2521",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/Kunjungan-ke-Pantis-asuhan.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2521-Kunjungan-ke-Pantis-asuhan.jpeg",
+            "status": "downloaded",
+            "bytes": 229530
+        },
+        {
+            "id": 2524,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2524",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/badminton.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2524-badminton.jpeg",
+            "status": "downloaded",
+            "bytes": 64213
+        },
+        {
+            "id": 2525,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2525",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/futsal.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2525-futsal.jpeg",
+            "status": "downloaded",
+            "bytes": 112015
+        },
+        {
+            "id": 2526,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2526",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/Grammar-1.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2526-Grammar-1.jpeg",
+            "status": "downloaded",
+            "bytes": 43215
+        },
+        {
+            "id": 2527,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2527",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/Grammar-Competition.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2527-Grammar-Competition.jpeg",
+            "status": "downloaded",
+            "bytes": 76625
+        },
+        {
+            "id": 2528,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2528",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/Grammar.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2528-Grammar.jpeg",
+            "status": "downloaded",
+            "bytes": 77613
+        },
+        {
+            "id": 2529,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2529",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/IMB.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2529-IMB.jpeg",
+            "status": "downloaded",
+            "bytes": 117718
+        },
+        {
+            "id": 2530,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/2530",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2022/01/kerja-bakti.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-2530-kerja-bakti.jpeg",
+            "status": "downloaded",
+            "bytes": 275269
+        },
+        {
+            "id": 3404,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/3404",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-23-at-10.13.22-1.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-3404-WhatsApp-Image-2024-10-23-at-10.13.22-1.jpeg",
+            "status": "downloaded",
+            "bytes": 189583
+        },
+        {
+            "id": 3405,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/3405",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-23-at-10.13.22-2.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-3405-WhatsApp-Image-2024-10-23-at-10.13.22-2.jpeg",
+            "status": "downloaded",
+            "bytes": 192295
+        },
+        {
+            "id": 3406,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/3406",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-23-at-10.13.22.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-3406-WhatsApp-Image-2024-10-23-at-10.13.22.jpeg",
+            "status": "downloaded",
+            "bytes": 168746
+        },
+        {
+            "id": 3432,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/3432",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-27-at-08.19.50.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-3432-WhatsApp-Image-2024-10-27-at-08.19.50.jpeg",
+            "status": "downloaded",
+            "bytes": 1217043
+        },
+        {
+            "id": 3434,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/3434",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-27-at-13.10.15.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-3434-WhatsApp-Image-2024-10-27-at-13.10.15.jpeg",
+            "status": "downloaded",
+            "bytes": 1818337
+        },
+        {
+            "id": 3438,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/3438",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2024/11/WhatsApp-Image-2024-11-08-at-16.57.07.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-3438-WhatsApp-Image-2024-11-08-at-16.57.07.jpeg",
+            "status": "downloaded",
+            "bytes": 948071
+        },
+        {
+            "id": 3439,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/3439",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2024/11/WhatsApp-Image-2024-11-08-at-16.57.07-1.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-3439-WhatsApp-Image-2024-11-08-at-16.57.07-1.jpeg",
+            "status": "downloaded",
+            "bytes": 1022618
+        },
+        {
+            "id": 3444,
+            "api_url": "https://www.stba-prayoga.ac.id/?rest_route=/wp/v2/media/3444",
+            "source_url": "https://www.stba-prayoga.ac.id/wp-content/uploads/2024/11/WhatsApp-Image-2024-11-14-at-10.25.53.jpeg",
+            "mime_type": "image/jpeg",
+            "local_file": "wp-media-3444-WhatsApp-Image-2024-11-14-at-10.25.53.jpeg",
+            "status": "downloaded",
+            "bytes": 157314
+        }
+    ]
+}

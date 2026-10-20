@@ -5,5 +5,6 @@ ErrorDocument 404 /web-stbaprayoga/modern/page.php?error=404
 RewriteRule ^page/([^/]+)/?$ page.php?slug=$1 [B,QSA,L]
 RewriteRule ^news/([^/]+)/?$ page.php?type=news&slug=$1 [B,QSA,L]
 RewriteRule ^berita/?$ page.php?type=news-list [QSA,L]
+RewriteRule ^galeri/?$ page.php?type=gallery [QSA,L]
 RewriteRule ^search/?$ page.php?type=search [QSA,L]
 

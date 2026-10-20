@@ -37,14 +37,27 @@ function modern_social_url($socials, $platform) {
     }
     return '';
 }
-
+function modern_gallery_url($filename, $thumbnail = false) {
+    $safe = basename((string) $filename);
+    $directory = $thumbnail ? 'wordpress-media/thumbs/' : 'wordpress-media/';
+    $path = __DIR__ . '/../assets/uploads/' . $directory . $safe;
+    return $safe !== '' && is_file($path) ? BASE_URL . 'assets/uploads/' . $directory . rawurlencode($safe) : '';
+}
 $slug = trim((string) ($_GET['slug'] ?? ''));
 $isNews = isset($_GET['type']) && $_GET['type'] === 'news';
 $isNewsList = isset($_GET['type']) && $_GET['type'] === 'news-list';
 $isSearch = isset($_GET['type']) && $_GET['type'] === 'search';
+$isGallery = isset($_GET['type']) && $_GET['type'] === 'gallery';
 $isHistory = !$isNews && $slug === 'sejarah-stba-prayoga';
 $articleMeta = '';
-if ($isSearch) {
+if ($isGallery) {
+    $page = array(
+        'page_name' => 'Galeri Kampus',
+        'page_content' => '',
+        'banner' => '',
+        'meta_description' => 'Dokumentasi kegiatan, fasilitas, prestasi, dan kehidupan kampus STBA Prayoga Padang.'
+    );
+} elseif ($isSearch) {
     $page = array(
         'page_name' => 'Pencarian',
         'page_content' => '',
@@ -87,6 +100,25 @@ if ($isSearch && (function_exists('mb_strlen') ? mb_strlen($searchQuery) : strle
     $searchResults = array_merge($pageSearch->fetchAll(PDO::FETCH_ASSOC), $newsSearch->fetchAll(PDO::FETCH_ASSOC));
 }
 $newsItems = array();
+$galleryItems = array();
+if ($isGallery) {
+    $manifestPath = __DIR__ . '/../assets/uploads/wordpress-media/manifest.json';
+    $manifest = is_file($manifestPath) ? json_decode((string) file_get_contents($manifestPath), true) : array();
+    foreach (($manifest['media'] ?? array()) as $media) {
+        if (!in_array($media['status'] ?? '', array('downloaded', 'existing'), true)) continue;
+        $filename = basename((string) ($media['local_file'] ?? ''));
+        $fullUrl = modern_gallery_url($filename);
+        $thumbnailName = pathinfo($filename, PATHINFO_FILENAME) . '.webp';
+        $thumbnailUrl = modern_gallery_url($thumbnailName, true);
+        if ($fullUrl === '' || $thumbnailUrl === '') continue;
+        $galleryItems[] = array(
+            'id' => (int) ($media['id'] ?? 0),
+            'full_url' => $fullUrl,
+            'thumbnail_url' => $thumbnailUrl,
+        );
+    }
+    usort($galleryItems, fn($left, $right) => $right['id'] <=> $left['id']);
+}
 $newsPage = 1;
 $newsTotalPages = 1;
 if ($isNewsList) {
@@ -121,9 +153,9 @@ $socials = $pdo->query("SELECT * FROM tbl_social WHERE social_url <> '' ORDER BY
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="<?php echo BASE_URL; ?>modern/assets/css/app.css">
+  <link rel="stylesheet" href="<?php echo BASE_URL; ?>modern/assets/css/app.css?v=<?php echo filemtime(__DIR__ . '/assets/css/app.css'); ?>">
   <script>document.documentElement.classList.add('js');</script>
-  <script src="<?php echo BASE_URL; ?>modern/assets/js/app.js" defer></script>
+  <script src="<?php echo BASE_URL; ?>modern/assets/js/app.js?v=<?php echo filemtime(__DIR__ . '/assets/js/app.js'); ?>" defer></script>
 </head>
 <body>
   <?php require __DIR__ . '/loader.php'; ?>
@@ -166,9 +198,29 @@ $socials = $pdo->query("SELECT * FROM tbl_social WHERE social_url <> '' ORDER BY
     <section class="relative overflow-hidden bg-brand-dark py-20 text-white sm:py-24">
       <?php if (!empty($page['banner'])): ?><img src="<?php echo modern_asset($page['banner']); ?>" alt="" class="absolute inset-0 h-full w-full object-cover opacity-25"><?php endif; ?>
       <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/90 to-brand/50"></div>
-      <div class="container-site relative"><nav class="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-[.14em] text-emerald-100/70" aria-label="Breadcrumb"><a href="<?php echo BASE_URL; ?>modern/" class="transition hover:text-white">Beranda</a><span aria-hidden="true">/</span><span class="text-emerald-200"><?php echo ($isNews || $isNewsList) ? 'Berita' : modern_e($page['page_name']); ?></span></nav><h1 class="max-w-5xl font-display text-5xl leading-tight sm:text-6xl"><?php echo modern_e($page['page_name']); ?></h1><?php if ($isSearch): ?><p class="mt-5 max-w-2xl text-base leading-7 text-emerald-50/75">Temukan halaman, informasi akademik, dan kabar terbaru STBA Prayoga.</p><?php elseif ($isNewsList): ?><p class="mt-5 max-w-2xl text-base leading-7 text-emerald-50/75">Ikuti berita, kegiatan akademik, dan cerita terbaru dari lingkungan STBA Prayoga Padang.</p><?php elseif ($articleMeta !== ''): ?><p class="mt-5 text-sm font-bold text-emerald-100/75"><?php echo modern_e($articleMeta); ?></p><?php endif; ?><div class="mt-7 h-1 w-20 rounded-full bg-accent"></div></div>
+      <div class="container-site relative"><nav class="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-[.14em] text-emerald-100/70" aria-label="Breadcrumb"><a href="<?php echo BASE_URL; ?>modern/" class="transition hover:text-white">Beranda</a><span aria-hidden="true">/</span><span class="text-emerald-200"><?php echo ($isNews || $isNewsList) ? 'Berita' : modern_e($page['page_name']); ?></span></nav><h1 class="max-w-5xl font-display text-5xl leading-tight sm:text-6xl"><?php echo modern_e($page['page_name']); ?></h1><?php if ($isGallery): ?><p class="mt-5 max-w-2xl text-base leading-7 text-emerald-50/75">Merekam kegiatan, fasilitas, prestasi, dan kebersamaan sivitas akademika STBA Prayoga.</p><?php elseif ($isSearch): ?><p class="mt-5 max-w-2xl text-base leading-7 text-emerald-50/75">Temukan halaman, informasi akademik, dan kabar terbaru STBA Prayoga.</p><?php elseif ($isNewsList): ?><p class="mt-5 max-w-2xl text-base leading-7 text-emerald-50/75">Ikuti berita, kegiatan akademik, dan cerita terbaru dari lingkungan STBA Prayoga Padang.</p><?php elseif ($articleMeta !== ''): ?><p class="mt-5 text-sm font-bold text-emerald-100/75"><?php echo modern_e($articleMeta); ?></p><?php endif; ?><div class="mt-7 h-1 w-20 rounded-full bg-accent"></div></div>
     </section>
-    <?php if ($isSearch): ?>
+    <?php if ($isGallery): ?>
+    <section class="relative overflow-hidden py-16 sm:py-24">
+      <div class="pointer-events-none absolute -right-28 top-10 h-72 w-72 rounded-full bg-brand-soft blur-3xl"></div>
+      <div class="container-site relative">
+        <div class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p class="section-kicker">Dokumentasi kampus</p><h2 class="section-title">Momen dari STBA Prayoga</h2><p class="section-copy">Jelajahi dokumentasi kegiatan mahasiswa, fasilitas pembelajaran, pengabdian, serta perjalanan kampus.</p></div><span class="w-fit rounded-full bg-brand-soft px-4 py-2 text-xs font-extrabold text-brand"><?php echo count($galleryItems); ?> foto</span></div>
+        <?php if ($galleryItems): ?><div class="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <?php foreach ($galleryItems as $index => $photo): $photoLabel = 'Foto galeri ' . ($index + 1); ?>
+          <button type="button" class="reveal group relative aspect-[4/3] w-full overflow-hidden rounded-[1.4rem] bg-brand-dark text-left shadow-md shadow-brand-dark/10 ring-1 ring-brand-dark/5 transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand/20 focus:outline-none focus:ring-4 focus:ring-brand/30" data-gallery-item data-gallery-src="<?php echo modern_e($photo['full_url']); ?>" aria-label="Buka <?php echo modern_e($photoLabel); ?>" style="transition-delay:<?php echo ($index % 4) * 45; ?>ms">
+            <img src="<?php echo modern_e($photo['thumbnail_url']); ?>" alt="<?php echo modern_e($photoLabel); ?>" class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" decoding="async">
+            <span class="absolute inset-0 bg-gradient-to-t from-brand-dark/40 via-transparent to-transparent opacity-70 transition duration-300 group-hover:opacity-100"></span>
+            <span class="absolute bottom-4 right-4 grid h-10 w-10 place-items-center rounded-full border border-white/25 bg-brand-dark/45 text-base text-white opacity-0 backdrop-blur transition group-hover:bg-accent group-hover:text-brand-dark group-hover:opacity-100 group-focus:opacity-100" aria-hidden="true">↗</span>
+          </button>
+          <?php endforeach; ?>
+        </div><?php else: ?><div class="rounded-3xl border border-emerald-900/5 bg-white p-12 text-center shadow-sm"><h2 class="font-display text-3xl text-brand-dark">Galeri belum tersedia</h2><p class="mt-3 text-slate-600">Dokumentasi kampus akan ditampilkan di halaman ini.</p></div><?php endif; ?>
+      </div>
+    </section>
+    <div data-gallery-dialog class="fixed inset-0 z-[120] hidden items-center justify-center bg-brand-dark/95 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Tampilan foto galeri">
+      <button type="button" data-gallery-close class="absolute inset-0" aria-label="Tutup foto"></button>
+      <figure class="relative z-10 max-h-[92vh] max-w-6xl"><img data-gallery-image src="" alt="Foto galeri" class="max-h-[86vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl"><button type="button" data-gallery-close class="absolute -right-2 -top-12 grid h-10 w-10 place-items-center rounded-full bg-white text-xl text-brand-dark shadow-lg" aria-label="Tutup foto">×</button></figure>
+    </div>
+    <?php elseif ($isSearch): ?>
     <section class="relative overflow-hidden py-16 sm:py-24"><div class="pointer-events-none absolute -right-28 top-10 h-72 w-72 rounded-full bg-brand-soft blur-3xl"></div><div class="container-site relative max-w-5xl">
       <form action="<?php echo BASE_URL; ?>modern/search" method="get" class="flex flex-col gap-3 rounded-3xl border border-emerald-900/5 bg-white p-5 shadow-xl shadow-brand-dark/5 sm:flex-row sm:p-7"><label class="sr-only" for="search-query">Kata pencarian</label><div class="relative min-w-0 flex-1"><svg class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search-query" name="q" type="search" minlength="2" maxlength="100" required value="<?php echo modern_e($searchQuery); ?>" placeholder="Cari informasi di STBA Prayoga…" class="w-full rounded-2xl border border-slate-200 bg-slate-50 py-4 pl-12 pr-4 text-sm text-ink outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10"></div><button class="rounded-2xl bg-brand px-8 py-4 text-sm font-extrabold text-white transition hover:bg-brand-dark">Cari</button></form>
       <?php if ($searchQuery === ''): ?><div class="mt-8 rounded-3xl border border-emerald-900/5 bg-white p-9 text-center"><h2 class="font-display text-3xl text-brand-dark">Mulai pencarian</h2><p class="mt-3 text-slate-600">Masukkan sedikitnya dua karakter untuk mencari seluruh konten website.</p></div><?php elseif ((function_exists('mb_strlen') ? mb_strlen($searchQuery) : strlen($searchQuery)) < 2): ?><div class="mt-8 rounded-3xl border border-amber-200 bg-amber-50 p-7 text-amber-900">Kata pencarian harus terdiri dari sedikitnya dua karakter.</div><?php elseif (!$searchResults): ?><div class="mt-8 rounded-3xl border border-emerald-900/5 bg-white p-9 text-center"><h2 class="font-display text-3xl text-brand-dark">Tidak ada hasil ditemukan</h2><p class="mt-3 text-slate-600">Coba gunakan kata yang lebih umum atau periksa kembali ejaannya.</p></div><?php else: ?><div class="mt-10 flex items-end justify-between gap-5"><div><p class="section-kicker">Hasil pencarian</p><h2 class="font-display text-3xl text-brand-dark">Ditemukan <?php echo count($searchResults); ?> hasil</h2></div><p class="hidden text-sm text-slate-500 sm:block">untuk “<?php echo modern_e($searchQuery); ?>”</p></div><div class="mt-6 space-y-4"><?php foreach ($searchResults as $result): $resultUrl = $result['result_type'] === 'Berita' ? BASE_URL . 'modern/news/' . rawurlencode($result['slug']) : BASE_URL . 'modern/page/' . rawurlencode($result['slug']); ?><article class="group rounded-3xl border border-emerald-900/5 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:p-7"><div class="flex items-start justify-between gap-5"><div><span class="inline-flex rounded-full bg-brand-soft px-3 py-1 text-[10px] font-extrabold uppercase tracking-[.14em] text-brand"><?php echo modern_e($result['result_type']); ?></span><h3 class="mt-3 font-display text-2xl text-brand-dark"><a href="<?php echo modern_e($resultUrl); ?>" class="transition hover:text-brand"><?php echo modern_e($result['title']); ?></a></h3><p class="mt-3 line-clamp-2 text-sm leading-7 text-slate-600"><?php echo modern_e(strip_tags($result['content'])); ?></p></div><a href="<?php echo modern_e($resultUrl); ?>" class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-soft font-bold text-brand transition group-hover:bg-brand group-hover:text-white" aria-label="Buka <?php echo modern_e($result['title']); ?>">→</a></div></article><?php endforeach; ?></div><?php endif; ?>

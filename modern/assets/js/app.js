@@ -57,6 +57,32 @@
     if (event.key === 'Escape') closeSearch();
   });
 
+  const galleryDialog = document.querySelector('[data-gallery-dialog]');
+  const galleryImage = galleryDialog?.querySelector('[data-gallery-image]');
+  let galleryReturnFocus = null;
+  const closeGallery = () => {
+    if (!galleryDialog || galleryDialog.classList.contains('hidden')) return;
+    galleryDialog.classList.add('hidden');
+    galleryDialog.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+    if (galleryImage) galleryImage.src = '';
+    galleryReturnFocus?.focus();
+  };
+  document.querySelectorAll('[data-gallery-item]').forEach((item) => item.addEventListener('click', () => {
+    if (!galleryDialog || !galleryImage) return;
+    galleryReturnFocus = item;
+    galleryImage.src = item.dataset.gallerySrc || '';
+    galleryImage.alt = item.getAttribute('aria-label') || 'Foto galeri';
+    galleryDialog.classList.remove('hidden');
+    galleryDialog.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+    galleryDialog.querySelector('[data-gallery-close]')?.focus();
+  }));
+  galleryDialog?.querySelectorAll('[data-gallery-close]').forEach((button) => button.addEventListener('click', closeGallery));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeGallery();
+  });
+
   const slides = [...document.querySelectorAll('[data-hero-slide]')];
   const dots = [...document.querySelectorAll('[data-hero-dot]')];
   let current = 0;

@@ -67,12 +67,12 @@ $counters = array(
     array($settings['counter_3_value'], $settings['counter_3_title']), array($settings['counter_4_value'], $settings['counter_4_title'])
 );
 $campusOffers = array(
-    array('title' => 'Pembelajaran Bahasa Inggris', 'description' => 'Mengembangkan kemampuan bahasa Inggris akademik, profesional, dan komunikatif melalui proses belajar yang aktif dan terarah.', 'image' => 'slider-3.jpg', 'label' => 'Komunikatif'),
-    array('title' => 'Kajian Bahasa dan Sastra', 'description' => 'Mendalami linguistik, kesusastraan, penulisan, penerjemahan, serta analisis karya dalam bahasa Inggris.', 'image' => 'slider-9.jpeg', 'label' => 'Akademik'),
-    array('title' => 'Dosen Berpengalaman', 'description' => 'Belajar bersama tenaga pengajar yang kompeten dan berdedikasi dalam bidang bahasa, sastra, dan penelitian.', 'image' => 'slider-11.jpg', 'label' => 'Berkualitas'),
-    array('title' => 'Lingkungan Belajar Humanis', 'description' => 'Suasana kampus yang mendukung perkembangan intelektual, karakter, kreativitas, dan kepedulian sosial.', 'image' => 'slider-12.jpg', 'label' => 'Humanis'),
-    array('title' => 'Pengembangan Kompetensi', 'description' => 'Kegiatan akademik dan kemahasiswaan membantu mahasiswa mengasah komunikasi, organisasi, serta kepemimpinan.', 'image' => 'news-33.jpeg', 'label' => 'Bertumbuh'),
-    array('title' => 'Persiapan Karier', 'description' => 'Mempersiapkan lulusan untuk berkarya di bidang pendidikan, penerjemahan, komunikasi, pariwisata, media, dan industri kreatif.', 'image' => 'news-31.jpeg', 'label' => 'Masa Depan')
+    array('title' => 'Pembelajaran Bahasa Inggris', 'description' => 'Mengembangkan kemampuan bahasa Inggris akademik, profesional, dan komunikatif melalui proses belajar yang aktif dan terarah.', 'image' => 'campus-offer-english-learning.webp', 'label' => 'Komunikatif'),
+    array('title' => 'Kajian Bahasa dan Sastra', 'description' => 'Mendalami linguistik, kesusastraan, penulisan, penerjemahan, serta analisis karya dalam bahasa Inggris.', 'image' => 'campus-offer-language-literature.webp', 'label' => 'Akademik'),
+    array('title' => 'Dosen Berpengalaman', 'description' => 'Belajar bersama tenaga pengajar yang kompeten dan berdedikasi dalam bidang bahasa, sastra, dan penelitian.', 'image' => 'campus-offer-experienced-lecturer.webp', 'label' => 'Berkualitas'),
+    array('title' => 'Lingkungan Belajar Humanis', 'description' => 'Suasana kampus yang mendukung perkembangan intelektual, karakter, kreativitas, dan kepedulian sosial.', 'image' => 'campus-offer-humanist-campus.webp', 'label' => 'Humanis'),
+    array('title' => 'Pengembangan Kompetensi', 'description' => 'Kegiatan akademik dan kemahasiswaan membantu mahasiswa mengasah komunikasi, organisasi, serta kepemimpinan.', 'image' => 'campus-offer-competency.webp', 'label' => 'Bertumbuh'),
+    array('title' => 'Persiapan Karier', 'description' => 'Mempersiapkan lulusan untuk berkarya di bidang pendidikan, penerjemahan, komunikasi, pariwisata, media, dan industri kreatif.', 'image' => 'campus-offer-career.webp', 'label' => 'Masa Depan')
 );
 ?>
 <!doctype html>
@@ -86,9 +86,9 @@ $campusOffers = array(
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="stylesheet" href="assets/css/app.css?v=<?php echo filemtime(__DIR__ . '/assets/css/app.css'); ?>">
   <script>document.documentElement.classList.add('js');</script>
-  <script src="assets/js/app.js" defer></script>
+  <script src="assets/js/app.js?v=<?php echo filemtime(__DIR__ . '/assets/js/app.js'); ?>" defer></script>
 </head>
 <body>
   <?php require __DIR__ . '/loader.php'; ?>
