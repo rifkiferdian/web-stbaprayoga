@@ -117,9 +117,23 @@ function sanitize_rich_html($html)
 	$nodes = array();
 	foreach ($root->getElementsByTagName('*') as $node) { $nodes[] = $node; }
 	foreach ($nodes as $node) {
+		if ($node === $root || !$node->parentNode) {
+			continue;
+		}
 		$tag = strtolower($node->nodeName);
 		if (!in_array($tag, $allowed_tags, true)) {
-			$node->parentNode->removeChild($node);
+			// Remove active/embedded elements with their contents. For harmless
+			// formatting wrappers (notably Word's span/font tags), unwrap the
+			// element so the editor text itself is never discarded.
+			if (in_array($tag, array('script','style','object','embed','applet','link','meta'), true)) {
+				$node->parentNode->removeChild($node);
+			} else {
+				$parent = $node->parentNode;
+				while ($node->firstChild) {
+					$parent->insertBefore($node->firstChild, $node);
+				}
+				$parent->removeChild($node);
+			}
 			continue;
 		}
 		$permitted = isset($allowed_attributes[$tag]) ? $allowed_attributes[$tag] : array();
