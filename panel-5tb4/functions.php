@@ -95,14 +95,47 @@ function sanitize_rich_html($html)
 		return '';
 	}
 
-	$allowed_tags = array('p','br','strong','b','em','i','u','ul','ol','li','blockquote','h1','h2','h3','h4','h5','h6','a','img','table','thead','tbody','tr','th','td','iframe');
+	$allowed_tags = array('p','div','span','br','hr','strong','b','em','i','u','s','strike','sub','sup','ul','ol','li','blockquote','h1','h2','h3','h4','h5','h6','a','img','figure','figcaption','table','thead','tbody','tr','th','td','iframe');
 	$allowed_attributes = array(
 		'a' => array('href','title','target'),
-		'img' => array('src','alt','title','width','height'),
-		'table' => array('border','cellpadding','cellspacing'),
-		'th' => array('colspan','rowspan'), 'td' => array('colspan','rowspan'),
+		'img' => array('src','alt','title','width','height','style','align'),
+		'ol' => array('start','type','style'), 'ul' => array('style'), 'li' => array('value','style'),
+		'table' => array('border','cellpadding','cellspacing','width','style','align'),
+		'th' => array('colspan','rowspan','style','align'), 'td' => array('colspan','rowspan','style','align'),
 		'iframe' => array('src','width','height','frameborder','allowfullscreen')
 	);
+	foreach (array('p','div','span','blockquote','h1','h2','h3','h4','h5','h6','figure','figcaption','strong','b','em','i','u','s','strike') as $styled_tag) {
+		$allowed_attributes[$styled_tag] = array('style','align');
+	}
+
+	$sanitize_inline_style = function($style) {
+		$safe = array();
+		foreach (explode(';', (string) $style) as $declaration) {
+			if (strpos($declaration, ':') === false) continue;
+			list($property, $value) = array_map('trim', explode(':', $declaration, 2));
+			$property = strtolower($property);
+			$value = trim($value);
+			$is_safe = false;
+			switch ($property) {
+				case 'text-align': $is_safe = preg_match('/^(left|center|right|justify)$/i', $value); break;
+				case 'font-weight': $is_safe = preg_match('/^(normal|bold|bolder|lighter|[1-9]00)$/i', $value); break;
+				case 'font-style': $is_safe = preg_match('/^(normal|italic|oblique)$/i', $value); break;
+				case 'text-decoration': $is_safe = preg_match('/^(none|underline|line-through|overline)(\s+(underline|line-through|overline))*$/i', $value); break;
+				case 'color':
+				case 'background-color': $is_safe = preg_match('/^(#[0-9a-f]{3,8}|rgba?\([0-9.,%\s]+\)|hsla?\([0-9.,%\s]+\)|[a-z]+)$/i', $value); break;
+				case 'font-size': $is_safe = preg_match('/^(?:[0-9]|[1-9][0-9]|1[0-9]{2}|200)(px|pt|%|em|rem)$/i', $value); break;
+				case 'font-family': $is_safe = preg_match('/^[a-z0-9 ,\-"\']+$/i', $value); break;
+				case 'line-height': $is_safe = preg_match('/^([0-9]+(?:\.[0-9]+)?)(px|pt|%|em|rem)?$/i', $value); break;
+				case 'margin-left':
+				case 'text-indent': $is_safe = preg_match('/^-?(?:[0-9]|[1-9][0-9]{0,2})(px|pt|%|em|rem)$/i', $value); break;
+				case 'width':
+				case 'height': $is_safe = preg_match('/^(auto|[0-9]+(?:\.[0-9]+)?(px|%|em|rem))$/i', $value); break;
+				case 'float': $is_safe = preg_match('/^(left|right|none)$/i', $value); break;
+			}
+			if ($is_safe) $safe[] = $property . ':' . $value;
+		}
+		return $safe ? implode(';', $safe) . ';' : '';
+	};
 
 	$document = new DOMDocument();
 	$previous = libxml_use_internal_errors(true);
@@ -142,6 +175,24 @@ function sanitize_rich_html($html)
 			$value = trim($attribute->value);
 			if (!in_array($name, $permitted, true)) {
 				$node->removeAttribute($attribute->name);
+				continue;
+			}
+			if ($name === 'style') {
+				$safe_style = $sanitize_inline_style($value);
+				if ($safe_style === '') {
+					$node->removeAttribute($attribute->name);
+				} else {
+					$node->setAttribute('style', $safe_style);
+				}
+				continue;
+			}
+			if ($name === 'align') {
+				$alignment = strtolower($value);
+				if (!in_array($alignment, array('left','center','right','justify'), true)) {
+					$node->removeAttribute($attribute->name);
+				} else {
+					$node->setAttribute('align', $alignment);
+				}
 				continue;
 			}
 			if (in_array($name, array('href','src'), true) && preg_match('/^(?:javascript|data|vbscript):/i', preg_replace('/\s+/', '', $value))) {
