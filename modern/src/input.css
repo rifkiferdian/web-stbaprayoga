@@ -98,6 +98,13 @@
 .modern-content th:last-child, .modern-content td:last-child { border-right: 0; }
 .modern-content iframe { display: block; width: 100%; min-height: min(70vh, 720px); border: 1px solid #dcebe2; border-radius: 1rem; background: #f8fafc; }
 
+/* Match news copy width to its featured image without overriding CKEditor alignment. */
+.news-content > p,
+.news-content > div,
+.news-content > blockquote,
+.news-content > ul,
+.news-content > ol { width: 100%; max-width: none; margin-inline: auto; box-sizing: border-box; }
+
 .history-content { overflow: visible; background: linear-gradient(180deg, #fff 0, #f8fcf9 100%); }
 .history-intro { position: relative; overflow: hidden; margin: -1rem -1rem 3rem; border-radius: 1.5rem; background: #0b3b29; padding: 2rem; color: rgb(255 255 255 / 72%); }
 .history-intro::after { content: "1971"; position: absolute; right: -1rem; bottom: -2.25rem; color: rgb(255 255 255 / 6%); font-family: "DM Serif Display", Georgia, serif; font-size: 9rem; line-height: 1; }
