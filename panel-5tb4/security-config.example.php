@@ -1,12 +1,15 @@
 <?php
 
-// Copy this file to security-config.local.php in the same directory and fill in the values.
-// security-config.local.php is excluded by .gitignore.
+// Copy this file to security-config.local.php and fill in values for the
+// current environment. The .local.php file is ignored by Git.
 return array(
-	'recaptcha_site_key' => 'YOUR_RECAPTCHA_V2_SITE_KEY',
-	'recaptcha_secret_key' => 'YOUR_RECAPTCHA_V2_SECRET_KEY',
-
-	// Enable only when the public origin accepts traffic exclusively through
-	// Cloudflare; otherwise CF-Connecting-IP can be spoofed by direct clients.
+	'base_url' => 'https://www.example.com/',
+	'db_host' => 'localhost',
+	'db_port' => 3306,
+	'db_name' => 'database_name',
+	'db_user' => 'database_user',
+	'db_password' => 'database_password',
+	'recaptcha_site_key' => '',
+	'recaptcha_secret_key' => '',
 	'trust_cloudflare_proxy' => false,
 );

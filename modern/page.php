@@ -121,17 +121,52 @@ if ($isGallery) {
 }
 $newsPage = 1;
 $newsTotalPages = 1;
+$newsCategories = array();
+$newsArchives = array();
+$selectedNewsCategory = '';
+$selectedNewsYear = '';
+$selectedNewsSearch = '';
+$newsTotal = 0;
 if ($isNewsList) {
     $newsPerPage = 9;
-    $newsTotal = (int) $pdo->query("SELECT COUNT(*) FROM tbl_news")->fetchColumn();
+    $newsYearSql = "CASE WHEN n.news_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN LEFT(n.news_date, 4) WHEN n.news_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN RIGHT(n.news_date, 4) ELSE NULL END";
+    $newsDateSql = "CASE WHEN n.news_date REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' THEN STR_TO_DATE(n.news_date, '%Y-%m-%d') WHEN n.news_date REGEXP '^[0-9]{2}-[0-9]{2}-[0-9]{4}$' THEN STR_TO_DATE(n.news_date, '%d-%m-%Y') ELSE NULL END";
+    $newsCategories = $pdo->query("SELECT c.category_name, c.category_slug, COUNT(n.news_id) AS news_count FROM tbl_category c INNER JOIN tbl_news n ON n.category_id=c.category_id GROUP BY c.category_id, c.category_name, c.category_slug ORDER BY c.category_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $newsArchives = $pdo->query("SELECT {$newsYearSql} AS news_year, COUNT(*) AS news_count FROM tbl_news n WHERE {$newsYearSql} IS NOT NULL GROUP BY news_year ORDER BY news_year DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $requestedCategory = trim((string) ($_GET['category'] ?? ''));
+    if ($requestedCategory !== '' && in_array($requestedCategory, array_column($newsCategories, 'category_slug'), true)) $selectedNewsCategory = $requestedCategory;
+    $requestedYear = trim((string) ($_GET['year'] ?? ''));
+    if (preg_match('/^[0-9]{4}$/', $requestedYear) && in_array($requestedYear, array_map('strval', array_column($newsArchives, 'news_year')), true)) $selectedNewsYear = $requestedYear;
+    $selectedNewsSearch = trim((string) ($_GET['title'] ?? ''));
+    $selectedNewsSearch = function_exists('mb_substr') ? mb_substr($selectedNewsSearch, 0, 100) : substr($selectedNewsSearch, 0, 100);
+    $newsWhere = array();
+    $newsParams = array();
+    if ($selectedNewsCategory !== '') { $newsWhere[] = 'c.category_slug = :category'; $newsParams[':category'] = $selectedNewsCategory; }
+    if ($selectedNewsYear !== '') { $newsWhere[] = "{$newsYearSql} = :year"; $newsParams[':year'] = $selectedNewsYear; }
+    if ($selectedNewsSearch !== '') { $newsWhere[] = 'n.news_title LIKE :title'; $newsParams[':title'] = '%' . $selectedNewsSearch . '%'; }
+    $newsWhereSql = $newsWhere ? ' WHERE ' . implode(' AND ', $newsWhere) : '';
+    $newsCountStatement = $pdo->prepare("SELECT COUNT(*) FROM tbl_news n INNER JOIN tbl_category c ON c.category_id=n.category_id{$newsWhereSql}");
+    $newsCountStatement->execute($newsParams);
+    $newsTotal = (int) $newsCountStatement->fetchColumn();
     $newsTotalPages = max(1, (int) ceil($newsTotal / $newsPerPage));
     $newsPage = max(1, min($newsTotalPages, (int) ($_GET['page'] ?? 1)));
     $newsOffset = ($newsPage - 1) * $newsPerPage;
-    $newsStatement = $pdo->prepare("SELECT * FROM tbl_news ORDER BY news_id DESC LIMIT :limit OFFSET :offset");
+    $newsStatement = $pdo->prepare("SELECT n.*, c.category_name, c.category_slug FROM tbl_news n INNER JOIN tbl_category c ON c.category_id=n.category_id{$newsWhereSql} ORDER BY {$newsDateSql} DESC, n.news_id DESC LIMIT :limit OFFSET :offset");
+    foreach ($newsParams as $name => $value) $newsStatement->bindValue($name, $value, PDO::PARAM_STR);
     $newsStatement->bindValue(':limit', $newsPerPage, PDO::PARAM_INT);
     $newsStatement->bindValue(':offset', $newsOffset, PDO::PARAM_INT);
     $newsStatement->execute();
     $newsItems = $newsStatement->fetchAll(PDO::FETCH_ASSOC);
+}
+function modern_news_list_url($category = '', $year = '', $page = 1, $title = null) {
+    global $selectedNewsSearch;
+    $query = array();
+    if ($category !== '') $query['category'] = $category;
+    if ($year !== '') $query['year'] = $year;
+    $title = $title === null ? $selectedNewsSearch : trim((string) $title);
+    if ($title !== '') $query['title'] = $title;
+    if ($page > 1) $query['page'] = (int) $page;
+    return BASE_URL . 'modern/berita' . ($query ? '?' . http_build_query($query) : '');
 }
 $allMenus = $pdo->query("SELECT m.*, p.page_name, p.page_slug FROM tbl_menu m LEFT JOIN tbl_page p ON m.page_id=p.page_id ORDER BY m.menu_parent ASC, m.menu_order ASC")->fetchAll(PDO::FETCH_ASSOC);
 $menus = array();
@@ -228,16 +263,30 @@ $socials = $pdo->query("SELECT * FROM tbl_social WHERE social_url <> '' ORDER BY
     <?php elseif ($isNewsList): ?>
     <section class="relative overflow-hidden py-16 sm:py-24">
       <div class="pointer-events-none absolute -right-28 top-10 h-72 w-72 rounded-full bg-brand-soft blur-3xl"></div>
-      <div class="container-site relative">
-        <?php if ($newsItems): ?><div class="grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+      <div class="container-site relative grid items-start gap-8 md:grid-cols-[minmax(0,1fr)_15rem] lg:grid-cols-[minmax(0,1fr)_17rem] xl:grid-cols-[minmax(0,1fr)_18rem] xl:gap-10">
+        <div class="min-w-0">
+        <?php if ($selectedNewsCategory !== '' || $selectedNewsYear !== '' || $selectedNewsSearch !== ''): ?><div class="mb-7 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-900/5 bg-white px-5 py-4 shadow-sm"><p class="text-sm text-slate-600"><strong class="text-brand-dark"><?php echo $newsTotal; ?> berita</strong> sesuai pencarian dan filter</p><a href="<?php echo BASE_URL; ?>modern/berita" class="text-sm font-extrabold text-brand transition hover:text-brand-dark">Hapus semua filter &times;</a></div><?php endif; ?>
+        <?php if ($newsItems): ?><div class="grid gap-7 lg:grid-cols-2 xl:grid-cols-3">
           <?php foreach ($newsItems as $index => $article): ?>
           <article class="reveal card-lift group overflow-hidden rounded-[1.75rem] border border-emerald-900/5 bg-white shadow-sm" style="transition-delay:<?php echo ($index % 3) * 70; ?>ms">
-            <a href="<?php echo BASE_URL; ?>modern/news/<?php echo rawurlencode($article['news_slug']); ?>" class="block overflow-hidden bg-brand-soft"><img src="<?php echo modern_asset($article['photo']); ?>" alt="<?php echo modern_e($article['news_title']); ?>" class="h-56 w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"></a>
-            <div class="p-7"><time class="text-[11px] font-extrabold uppercase tracking-[.14em] text-brand"><?php echo modern_e($article['news_date']); ?></time><h2 class="mt-3 font-display text-2xl leading-snug text-brand-dark"><a href="<?php echo BASE_URL; ?>modern/news/<?php echo rawurlencode($article['news_slug']); ?>" class="transition hover:text-brand"><?php echo modern_e($article['news_title']); ?></a></h2><p class="mt-3 line-clamp-3 text-sm leading-7 text-slate-600"><?php echo modern_e(strip_tags($article['news_content_short'] ?: $article['news_content'])); ?></p><a href="<?php echo BASE_URL; ?>modern/news/<?php echo rawurlencode($article['news_slug']); ?>" class="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-brand">Baca selengkapnya <span class="transition group-hover:translate-x-1">→</span></a></div>
+            <a href="<?php echo BASE_URL; ?>modern/news/<?php echo rawurlencode($article['news_slug']); ?>" class="block overflow-hidden bg-brand-soft"><img src="<?php echo modern_asset($article['photo']); ?>" alt="<?php echo modern_e($article['news_title']); ?>" class="h-48 w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"></a>
+            <div class="p-6"><div class="flex flex-wrap items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.1em] text-brand"><time><?php echo modern_e($article['news_date']); ?></time><span aria-hidden="true">&middot;</span><a href="<?php echo modern_e(modern_news_list_url($article['category_slug'], $selectedNewsYear)); ?>" class="transition hover:text-brand-dark"><?php echo modern_e($article['category_name']); ?></a></div><h2 class="mt-2.5 font-display text-lg leading-snug text-brand-dark"><a href="<?php echo BASE_URL; ?>modern/news/<?php echo rawurlencode($article['news_slug']); ?>" class="transition hover:text-brand"><?php echo modern_e($article['news_title']); ?></a></h2><p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600"><?php echo modern_e(strip_tags($article['news_content_short'] ?: $article['news_content'])); ?></p><a href="<?php echo BASE_URL; ?>modern/news/<?php echo rawurlencode($article['news_slug']); ?>" class="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-brand">Baca selengkapnya <span class="transition group-hover:translate-x-1">→</span></a></div>
           </article>
           <?php endforeach; ?>
         </div><?php else: ?><div class="rounded-3xl border border-emerald-900/5 bg-white p-12 text-center shadow-sm"><h2 class="font-display text-3xl text-brand-dark">Belum ada berita</h2><p class="mt-3 text-slate-600">Berita terbaru akan ditampilkan di halaman ini.</p></div><?php endif; ?>
-        <?php if ($newsTotalPages > 1): ?><nav class="mt-14 flex flex-wrap items-center justify-center gap-2" aria-label="Navigasi halaman berita"><?php if ($newsPage > 1): ?><a href="<?php echo BASE_URL; ?>modern/berita?page=<?php echo $newsPage - 1; ?>" class="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-brand transition hover:border-brand hover:bg-brand-soft">← Sebelumnya</a><?php endif; ?><?php for ($number = 1; $number <= $newsTotalPages; $number++): ?><a href="<?php echo BASE_URL; ?>modern/berita?page=<?php echo $number; ?>" class="grid h-10 w-10 place-items-center rounded-full text-sm font-extrabold transition <?php echo $number === $newsPage ? 'bg-brand text-white' : 'border border-slate-300 text-brand hover:border-brand hover:bg-brand-soft'; ?>"<?php echo $number === $newsPage ? ' aria-current="page"' : ''; ?>><?php echo $number; ?></a><?php endfor; ?><?php if ($newsPage < $newsTotalPages): ?><a href="<?php echo BASE_URL; ?>modern/berita?page=<?php echo $newsPage + 1; ?>" class="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-brand transition hover:border-brand hover:bg-brand-soft">Berikutnya →</a><?php endif; ?></nav><?php endif; ?>
+        <?php if ($newsTotalPages > 1): ?><nav class="mt-14 flex flex-wrap items-center justify-center gap-2" aria-label="Navigasi halaman berita"><?php if ($newsPage > 1): ?><a href="<?php echo modern_e(modern_news_list_url($selectedNewsCategory, $selectedNewsYear, $newsPage - 1)); ?>" class="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-brand transition hover:border-brand hover:bg-brand-soft">← Sebelumnya</a><?php endif; ?><?php for ($number = 1; $number <= $newsTotalPages; $number++): ?><a href="<?php echo modern_e(modern_news_list_url($selectedNewsCategory, $selectedNewsYear, $number)); ?>" class="grid h-10 w-10 place-items-center rounded-full text-sm font-extrabold transition <?php echo $number === $newsPage ? 'bg-brand text-white' : 'border border-slate-300 text-brand hover:border-brand hover:bg-brand-soft'; ?>"<?php echo $number === $newsPage ? ' aria-current="page"' : ''; ?>><?php echo $number; ?></a><?php endfor; ?><?php if ($newsPage < $newsTotalPages): ?><a href="<?php echo modern_e(modern_news_list_url($selectedNewsCategory, $selectedNewsYear, $newsPage + 1)); ?>" class="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold text-brand transition hover:border-brand hover:bg-brand-soft">Berikutnya →</a><?php endif; ?></nav><?php endif; ?>
+        </div>
+        <aside class="space-y-6 md:sticky md:top-36" aria-label="Filter berita">
+          <div class="overflow-hidden rounded-[1.5rem] border border-emerald-900/5 bg-white p-5 shadow-sm"><label for="news-title-search" class="block font-display text-xl text-brand-dark">Cari Judul Berita</label><form action="<?php echo BASE_URL; ?>modern/berita" method="get" class="mt-4 space-y-3"><?php if ($selectedNewsCategory !== ''): ?><input type="hidden" name="category" value="<?php echo modern_e($selectedNewsCategory); ?>"><?php endif; ?><?php if ($selectedNewsYear !== ''): ?><input type="hidden" name="year" value="<?php echo modern_e($selectedNewsYear); ?>"><?php endif; ?><div class="relative"><svg class="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="news-title-search" name="title" type="search" maxlength="100" value="<?php echo modern_e($selectedNewsSearch); ?>" placeholder="Masukkan judul..." class="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-3 text-sm text-ink outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10"></div><button class="w-full rounded-xl bg-brand px-4 py-3 text-sm font-extrabold text-white transition hover:bg-brand-dark">Cari berita</button><?php if ($selectedNewsSearch !== ''): ?><a href="<?php echo modern_e(modern_news_list_url($selectedNewsCategory, $selectedNewsYear, 1, '')); ?>" class="block text-center text-xs font-bold text-slate-500 transition hover:text-brand">Hapus pencarian</a><?php endif; ?></form></div>
+          <div class="overflow-hidden rounded-[1.5rem] border border-emerald-900/5 bg-white shadow-sm">
+            <div class="border-b border-slate-100 px-6 py-5"><p class="section-kicker">Filter berita</p><h2 class="mt-1 font-display text-2xl text-brand-dark">Kategori</h2></div>
+            <nav class="p-3" aria-label="Kategori berita"><a href="<?php echo modern_e(modern_news_list_url('', $selectedNewsYear)); ?>" class="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition <?php echo $selectedNewsCategory === '' ? 'bg-brand text-white' : 'text-slate-600 hover:bg-brand-soft hover:text-brand'; ?>"><span>Semua kategori</span><span class="text-xs opacity-70"><?php echo array_sum(array_map('intval', array_column($newsCategories, 'news_count'))); ?></span></a><?php foreach ($newsCategories as $category): ?><a href="<?php echo modern_e(modern_news_list_url($category['category_slug'], $selectedNewsYear)); ?>" class="mt-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition <?php echo $selectedNewsCategory === $category['category_slug'] ? 'bg-brand text-white' : 'text-slate-600 hover:bg-brand-soft hover:text-brand'; ?>"<?php echo $selectedNewsCategory === $category['category_slug'] ? ' aria-current="page"' : ''; ?>><span><?php echo modern_e($category['category_name']); ?></span><span class="text-xs opacity-70"><?php echo (int) $category['news_count']; ?></span></a><?php endforeach; ?></nav>
+          </div>
+          <div class="overflow-hidden rounded-[1.5rem] border border-emerald-900/5 bg-white shadow-sm">
+            <div class="border-b border-slate-100 px-6 py-5"><p class="section-kicker">Jelajahi waktu</p><h2 class="mt-1 font-display text-2xl text-brand-dark">Arsip Berita</h2></div>
+            <nav class="max-h-80 overflow-y-auto p-3" aria-label="Arsip berita per tahun"><a href="<?php echo modern_e(modern_news_list_url($selectedNewsCategory, '')); ?>" class="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition <?php echo $selectedNewsYear === '' ? 'bg-brand text-white' : 'text-slate-600 hover:bg-brand-soft hover:text-brand'; ?>"><span>Semua tahun</span></a><?php foreach ($newsArchives as $archive): ?><a href="<?php echo modern_e(modern_news_list_url($selectedNewsCategory, (string) $archive['news_year'])); ?>" class="mt-1 flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition <?php echo $selectedNewsYear === (string) $archive['news_year'] ? 'bg-brand text-white' : 'text-slate-600 hover:bg-brand-soft hover:text-brand'; ?>"<?php echo $selectedNewsYear === (string) $archive['news_year'] ? ' aria-current="page"' : ''; ?>><span><?php echo modern_e($archive['news_year']); ?></span><span class="text-xs opacity-70"><?php echo (int) $archive['news_count']; ?></span></a><?php endforeach; ?></nav>
+          </div>
+        </aside>
       </div>
     </section>
     <?php else: ?>
