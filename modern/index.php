@@ -24,6 +24,7 @@ $newsStatement->execute();
 $news = $newsStatement->fetchAll(PDO::FETCH_ASSOC);
 $partners = $pdo->query("SELECT * FROM tbl_partner ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
 $socials = $pdo->query("SELECT * FROM tbl_social WHERE social_url <> '' ORDER BY social_id ASC")->fetchAll(PDO::FETCH_ASSOC);
+$videos = $pdo->query("SELECT v.video_title, v.video_iframe, c.v_category_name FROM tbl_video v LEFT JOIN tbl_category_video c ON c.v_category_id=v.v_category_id ORDER BY v.video_id DESC")->fetchAll(PDO::FETCH_ASSOC);
 $allMenus = $pdo->query("SELECT m.*, p.page_name, p.page_slug FROM tbl_menu m LEFT JOIN tbl_page p ON m.page_id=p.page_id ORDER BY m.menu_parent ASC, m.menu_order ASC")->fetchAll(PDO::FETCH_ASSOC);
 $menus = array();
 $menuChildren = array();
@@ -60,8 +61,24 @@ function modern_social_url($socials, $platform) {
     }
     return '';
 }
+function modern_youtube_id($iframe) {
+    if (!preg_match('#(?:youtube(?:-nocookie)?\.com/embed/|youtu\.be/)([A-Za-z0-9_-]{11})#i', (string) $iframe, $match)) return '';
+    return $match[1];
+}
+function modern_profile_video($videos) {
+    foreach ($videos as $video) {
+        $label = strtolower((string) ($video['video_title'] ?? '') . ' ' . (string) ($video['v_category_name'] ?? ''));
+        $youtubeId = modern_youtube_id($video['video_iframe'] ?? '');
+        if ($youtubeId !== '' && preg_match('/profil|profile|kampus|stba/i', $label)) {
+            $video['youtube_id'] = $youtubeId;
+            return $video;
+        }
+    }
+    return null;
+}
 
 $heroFallbacks = array('slider-12.jpg', 'slider-11.jpg', 'slider-9.jpeg');
+$profileVideo = modern_profile_video($videos);
 $counters = array(
     array($settings['counter_1_value'], $settings['counter_1_title']), array($settings['counter_2_value'], $settings['counter_2_title']),
     array($settings['counter_3_value'], $settings['counter_3_title']), array($settings['counter_4_value'], $settings['counter_4_title'])
@@ -200,6 +217,27 @@ $campusOffers = array(
       <div class="absolute inset-0 opacity-15" style="background-image:url('<?php echo modern_asset($settings['counter_photo']); ?>');background-size:cover;background-position:center"></div>
       <div class="container-site relative grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 lg:grid-cols-4">
         <?php foreach ($counters as $counter): ?><div class="reveal bg-brand-dark/75 p-8 text-center backdrop-blur"><strong class="font-display text-4xl text-white sm:text-5xl"><?php echo modern_e($counter[0]); ?></strong><span class="mt-2 block text-xs font-bold uppercase tracking-[.16em] text-emerald-100/70"><?php echo modern_e($counter[1]); ?></span></div><?php endforeach; ?>
+      </div>
+    </section>
+    <?php endif; ?>
+
+    <?php if ($profileVideo): ?>
+    <section id="video-profil" class="bg-sand py-24 sm:py-32">
+      <div class="container-site">
+        <div class="reveal mx-auto max-w-3xl text-center">
+          <p class="section-kicker">Kenal lebih dekat</p>
+          <h2 class="section-title">Video Profil STBA Prayoga</h2>
+          <p class="section-copy mx-auto">Lihat lingkungan, semangat belajar, dan perjalanan STBA Prayoga dalam mempersiapkan generasi yang unggul dalam bahasa dan sastra Inggris.</p>
+        </div>
+        <div class="reveal mx-auto mt-12 max-w-5xl overflow-hidden rounded-3xl border border-brand/10 bg-brand-dark shadow-2xl">
+          <div class="aspect-video w-full">
+            <iframe class="h-full w-full" src="https://www.youtube-nocookie.com/embed/<?php echo modern_e($profileVideo['youtube_id']); ?>" title="<?php echo modern_e($profileVideo['video_title'] ?: 'Video Profil STBA Prayoga'); ?>" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="flex items-center justify-between gap-4 px-6 py-5 text-white sm:px-8">
+            <h3 class="font-display text-xl sm:text-2xl"><?php echo modern_e($profileVideo['video_title'] ?: 'Video Profil STBA Prayoga'); ?></h3>
+            <a href="https://www.youtube.com/watch?v=<?php echo modern_e($profileVideo['youtube_id']); ?>" target="_blank" rel="noopener noreferrer" class="shrink-0 text-xs font-extrabold uppercase tracking-wide text-emerald-200 hover:text-white">Buka di YouTube</a>
+          </div>
+        </div>
       </div>
     </section>
     <?php endif; ?>
