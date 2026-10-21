@@ -92,7 +92,7 @@
                                             $res1 = $r->fetchAll();                           
                                             foreach ($res1 as $row1) {
 
-                                                if($row1['page_id'] == 0):
+                                                if($row1['menu_type'] === 'Other'):
                                                     echo $row1['menu_name'];
                                                 else:
                                                     $s = $pdo->prepare("SELECT * 

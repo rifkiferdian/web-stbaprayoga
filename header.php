@@ -404,7 +404,7 @@ foreach ($result as $row)
 
                                     echo '<li>';
                                     
-                                    if($row['page_id'] == 0) {
+                                    if($row['menu_type'] === 'Other') {
                                         
                                         if($row['menu_url'] == '') {
                                             $final_url = 'javascript:void(0);';
@@ -436,7 +436,7 @@ foreach ($result as $row)
                                         foreach ($res1 as $row1) {
                                             //
                                             echo '<li>';
-                                            if($row1['page_id'] == 0) {
+                                            if($row1['menu_type'] === 'Other') {
                                                 if($row1['menu_url'] == '') {
                                                     $final_url1 = 'javascript:void(0);';
                                                 } else {

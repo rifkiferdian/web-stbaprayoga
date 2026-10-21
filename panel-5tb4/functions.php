@@ -48,6 +48,7 @@ function validate_admin_uploads(array &$files)
 		'image/jpeg' => array('jpg', 'jpeg'),
 		'image/png' => array('png'),
 		'image/gif' => array('gif'),
+		'image/webp' => array('webp'),
 		'application/pdf' => array('pdf'),
 		'application/zip' => array('zip', 'docx', 'xlsx', 'pptx'),
 		'application/x-rar-compressed' => array('rar'),

@@ -151,7 +151,7 @@ if(isset($_POST['form_other'])) {
                                                 $q->execute();
                                                 $res = $q->fetchAll();
                                                 foreach ($res as $row) {
-                                                    if($row['page_id']==0) {
+                                                    if($row['menu_type'] === 'Other') {
                                                         echo '<option value="'.$row['menu_id'].'">'.$row['menu_name'].'</option>';
                                                     } else {
                                                         $r = $pdo->prepare("SELECT * 
@@ -217,7 +217,7 @@ if(isset($_POST['form_other'])) {
                                                 $q->execute();
                                                 $res = $q->fetchAll();
                                                 foreach ($res as $row) {
-                                                    if($row['page_id']==0) {
+                                                    if($row['menu_type'] === 'Other') {
                                                         echo '<option value="'.$row['menu_id'].'">'.$row['menu_name'].'</option>';
                                                     } else {
                                                         $r = $pdo->prepare("SELECT * 

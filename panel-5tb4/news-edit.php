@@ -46,10 +46,9 @@ if(isset($_POST['form1'])) {
 		$error_message .= 'You must have to select a category<br>';
 	}
 
-	if($_POST['publisher'] == '') {
-		$publisher = $_SESSION['user']['full_name'];
-	} else {
-		$publisher = $_POST['publisher'];	
+	$publisher = trim(isset($_POST['publisher']) ? $_POST['publisher'] : '');
+	if($publisher === '') {
+		$publisher = 'Admin STBA';
 	}
 
 
@@ -266,7 +265,7 @@ foreach ($result as $row) {
 						<div class="form-group">
 							<label for="" class="col-sm-3 control-label">Publisher </label>
 							<div class="col-sm-6">
-								<input type="text" class="form-control" name="publisher" value="<?php echo $publisher; ?>"> (If you keep this blank, logged user will be treated as the publisher)
+								<input type="text" class="form-control" name="publisher" value="<?php echo $publisher; ?>"> (If left blank, Admin STBA will be used as the publisher)
 							</div>
 						</div>
 						<h3 class="seo-info">SEO Information</h3>

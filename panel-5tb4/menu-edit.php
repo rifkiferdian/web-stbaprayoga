@@ -177,7 +177,7 @@ foreach ($result as $row) {
                                                     } else {
                                                         $sel1 = '';
                                                     }
-                                                    if($row['page_id']==0) {      
+                                                    if($row['menu_type'] === 'Other') {
                                                         echo '<option value="'.$row['menu_id'].'" '.$sel1.'>'.$row['menu_name'].'</option>';
                                                     } else {
                                                         $r = $pdo->prepare("SELECT * 
@@ -247,7 +247,7 @@ foreach ($result as $row) {
                                                     } else {
                                                         $sel1 = '';
                                                     }
-                                                    if($row['page_id']==0) {      
+                                                    if($row['menu_type'] === 'Other') {
                                                         echo '<option value="'.$row['menu_id'].'" '.$sel1.'>'.$row['menu_name'].'</option>';
                                                     } else {
                                                         $r = $pdo->prepare("SELECT * 
